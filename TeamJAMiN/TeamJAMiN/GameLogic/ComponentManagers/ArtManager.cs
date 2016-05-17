@@ -77,7 +77,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             var result = new List<GameActionState>();
             result.Add(TicketManager.GetStateByTicketList(art.FirstTicket.ToList()));
-            if(art.SecondTicket != null)
+            if(art.SecondTicket != null && art.SecondTicket.Count() > 0)
             {
                 result.Add(TicketManager.GetStateByTicketList(art.SecondTicket.ToList()));
             }

@@ -52,7 +52,10 @@ namespace TeamJAMiN.GalleristComponentEntities
         {
             get
             {
-
+                if (SecondTicketData == null || SecondTicketData == "")
+                {
+                    return null;
+                }
                 return Array.ConvertAll(SecondTicketData.Split(';'), v => (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), v));
             }
             set
