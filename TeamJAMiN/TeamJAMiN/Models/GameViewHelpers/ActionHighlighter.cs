@@ -10,8 +10,6 @@ namespace TeamJAMiN.Models.GameViewHelpers
 {
     public static class ActionHighlighter
     {
-        
-
         public static string Highlight(this Game game, GameActionState state)
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
