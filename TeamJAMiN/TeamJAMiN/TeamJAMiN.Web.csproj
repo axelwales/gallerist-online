@@ -393,6 +393,7 @@
     <Compile Include="Models\ComponentViewModels\ReputationTileLocationViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\ReputationTileViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\SalesOfficeViewModel.cs" />
+    <Compile Include="Models\ComponentViewModels\TicketStacksViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\UnemployedAssistantViewModel.cs" />
     <Compile Include="Models\GameViewHelpers\ActionHighlighter.cs" />
     <Compile Include="Models\GameViewHelpers\ContractSort.cs" />
@@ -605,7 +606,7 @@
     <Content Include="Views\Manage\ManageProfile.cshtml" />
     <Content Include="Views\Game\InternationalMarket\AuctionLocation.cshtml" />
     <Content Include="Views\Game\PlayerBoard\ReputationTileLocation.cshtml" />
-    <Content Include="Views\Game\ChooseTicketForm.cshtml" />
+    <Content Include="Views\Game\TicketStacks\TicketStacks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
