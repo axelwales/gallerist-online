@@ -10,11 +10,15 @@ namespace TeamJAMiN.Models.ComponentViewModels
 {
     public class TicketStacksViewModel
     {
+        public int GameId { get; private set; }
+
         public List<TicketStackViewModel> Stacks { get; private set; }
         public List<VisitorTicketType> StackOrder = new List<VisitorTicketType> { VisitorTicketType.vip, VisitorTicketType.investor, VisitorTicketType.collector };
 
-        TicketStacksViewModel(string userName, Game game)
+        public TicketStacksViewModel(string userName, Game game)
         {
+            GameId = game.Id;
+
             Stacks = new List<TicketStackViewModel>();
             foreach( VisitorTicketType type in StackOrder )
             {
