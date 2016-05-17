@@ -71,6 +71,17 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public static bool IsValidTicketBonus(Game game, VisitorTicketType type)
         {
             var state = game.CurrentTurn.CurrentAction.State;
+            switch(state)
+            {
+                case GameActionState.ChooseTicketAny:
+                case GameActionState.ChooseTicketAnyTwo:
+                case GameActionState.ChooseTicketCollectorInvestor:
+                case GameActionState.ChooseTicketCollectorVip:
+                case GameActionState.ChooseTicketToThrowAway:
+                    break;
+                default:
+                    return false;
+            }
             return IsValidTicketBonus(state, game, type);
         }
     }

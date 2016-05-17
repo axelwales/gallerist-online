@@ -38,6 +38,16 @@ namespace TeamJAMiN.Models.ComponentViewModels
         {
             IsActivePlayer = FormHelper.IsActivePlayer(userName, game);
             IsValidActionState = ActionManager.IsValidTicketBonus(game, type);
+            if (IsValidActionState)
+            {
+                State = game.CurrentTurn.CurrentAction.State;
+                ActionLocation = type.ToString();
+            }
+            else
+            {
+                State = GameActionState.ChooseTicketAny; //this is a dummy state as this variable should not be used if IsValidActionState is false.
+                ActionLocation = "";
+            }
 
             SetAvailableTickets(game, type);
         }
