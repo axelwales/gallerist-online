@@ -28,7 +28,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             action.Turn = turn;
             var temp = turn.PendingActions;
             AddPendingOrderHelper(turn, action, position);
-            temp.IncrementPendingActionOrder();
+            temp.IncrementPendingActionOrder(position);
             temp.Add(action);
             turn.PendingActions = temp;
         }
@@ -53,7 +53,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 AddPendingOrderHelper(turn, action, position);
                 newActions.Add(action);
             }
-            temp.IncrementPendingActionOrder();
+            temp.IncrementPendingActionOrder(position);
             temp.AddRange(newActions);
             turn.PendingActions = temp;
         }
@@ -67,16 +67,19 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             else
             {
                 if (turn.PendingActions.Count > 0)
-                    newAction.Order = turn.PendingActions.Select(a => a.Order).OrderByDescending(o => o).FirstOrDefault();
+                    newAction.Order = turn.PendingActions.Select(a => a.Order).OrderByDescending(o => o).FirstOrDefault() + 1;
                 else
                     newAction.Order = turn.CurrentActionOrderNumber + 1;
             }
         }
-        private static void IncrementPendingActionOrder(this List<GameAction> pendingList)
+        private static void IncrementPendingActionOrder(this List<GameAction> pendingList, PendingPosition position)
         {
-            foreach (GameAction oldAction in pendingList)
+            if (position == PendingPosition.first)
             {
-                oldAction.Order += 1;
+                foreach (GameAction oldAction in pendingList)
+                {
+                    oldAction.Order += 1;
+                }
             }
         }
 
