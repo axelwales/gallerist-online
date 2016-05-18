@@ -27,7 +27,24 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             { GameActionState.GameStart, typeof(SetupContext) },
             { GameActionState.Pass, typeof(SetupContext) },
             { GameActionState.UseInfluenceAsFame, typeof(SetupContext) },
-            { GameActionState.UseInfluenceAsMoney, typeof(SetupContext) }
+            { GameActionState.UseInfluenceAsMoney, typeof(SetupContext) },
+            { GameActionState.GetTicketVip, typeof(BonusContext) },
+            { GameActionState.GetTicketInvestor, typeof(BonusContext) },
+            { GameActionState.GetTicketCollector, typeof(BonusContext) },
+            { GameActionState.GetAssistant, typeof(BonusContext) },
+            { GameActionState.GetMoney, typeof(BonusContext) },
+            { GameActionState.GetInfluence, typeof(BonusContext) },
+            { GameActionState.GetFame, typeof(BonusContext) },
+            { GameActionState.ChooseContract, typeof(BonusContext) },
+            { GameActionState.ChooseTicketAny, typeof(BonusContext) },
+            { GameActionState.ChooseTicketAnyTwo, typeof(BonusContext) },
+            { GameActionState.ChooseTicketCollectorInvestor, typeof(BonusContext) },
+            { GameActionState.ChooseTicketCollectorVip, typeof(BonusContext) },
+            { GameActionState.ChooseTicketToThrowAway, typeof(BonusContext) },
+            { GameActionState.ChooseVisitorFromPlaza, typeof(BonusContext) },
+            { GameActionState.ChooseVisitorFromPlazaVipInvestor, typeof(BonusContext) },
+            { GameActionState.ChooseVisitorFromBag, typeof(BonusContext) },
+            { GameActionState.ChooseArtistFame, typeof(BonusContext) }
         };
 
         public static ActionContext GetContext(GameActionState state, Game game)
