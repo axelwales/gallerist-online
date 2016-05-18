@@ -81,6 +81,11 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             {
                 result.Add(TicketManager.GetStateByTicketList(art.SecondTicket.ToList()));
             }
+            if(result.Count == 2 && result[0] == GameActionState.ChooseTicketAny && result[1] == GameActionState.ChooseTicketAny)
+            {
+                result.Clear();
+                result.Add(GameActionState.ChooseTicketAnyTwo);
+            }
             return result;
         }
     }
