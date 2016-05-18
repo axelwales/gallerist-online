@@ -60,17 +60,17 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static bool IsValidTicketBonus(GameActionState state, Game game, VisitorTicketType type, GameAction parent = null)
         {
-            if (parent == null)
-            {
-                parent = game.CurrentTurn.CurrentAction.Parent;
-            }
             var actionLocation = type.ToString();
             return IsValidTransition(state, actionLocation, game, parent);
         }
 
         public static bool IsValidTicketBonus(Game game, VisitorTicketType type)
         {
-            var state = game.CurrentTurn.CurrentAction.State;
+            var nextAction = game.CurrentTurn.GetNextActions().FirstOrDefault();
+            if (nextAction == null)
+                return false;
+            var state = nextAction.State;
+            var parent = nextAction.Parent;
             switch(state)
             {
                 case GameActionState.ChooseTicketAny:
@@ -82,7 +82,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 default:
                     return false;
             }
-            return IsValidTicketBonus(state, game, type);
+            return IsValidTicketBonus(state, game, type, parent);
         }
     }
 }
