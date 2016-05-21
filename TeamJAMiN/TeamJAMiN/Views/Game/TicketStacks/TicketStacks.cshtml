@@ -1,0 +1,29 @@
+﻿@using TeamJAMiN.Models.ComponentViewModels
+@model TicketStacksViewModel
+
+<div class="col-md-12">
+    @foreach (TicketStackViewModel stackModel in Model.Stacks)
+    {
+        <div class="col-md-4">
+            @if (stackModel.IsActivePlayer && stackModel.IsValidActionState)
+            {
+                using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.GameId, gameAction = stackModel.State, actionLocation = stackModel.ActionLocation }, FormMethod.Post, new { role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="col-xs-8 no-padding">
+                        <input type="submit" class="action-button" value="" />
+                        <div class="ticket-vip icon-lg icon-background"></div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-xs-8 no-padding">
+                    <div class="@stackModel.TicketCssClass icon-lg icon-background"></div>
+                </div>
+            }
+            <div class="col-xs-4 no-padding">x @stackModel.AvailableTickets</div>
+        </div>
+    }
+</div>
+

@@ -72,5 +72,21 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             }
             return StarToMoney[starLevel];
         }
+
+        public static List<GameActionState> GetArtTicketActionStates(this GameArt art)
+        {
+            var result = new List<GameActionState>();
+            result.Add(TicketManager.GetStateByTicketList(art.FirstTicket.ToList()));
+            if(art.SecondTicket != null && art.SecondTicket.Count() > 0)
+            {
+                result.Add(TicketManager.GetStateByTicketList(art.SecondTicket.ToList()));
+            }
+            if(result.Count == 2 && result[0] == GameActionState.ChooseTicketAny && result[1] == GameActionState.ChooseTicketAny)
+            {
+                result.Clear();
+                result.Add(GameActionState.ChooseTicketAnyTwo);
+            }
+            return result;
+        }
     }
 }

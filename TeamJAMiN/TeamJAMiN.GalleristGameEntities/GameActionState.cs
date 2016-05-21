@@ -21,6 +21,9 @@ namespace TeamJAMiN.GalleristComponentEntities
         UseTicket,
         UseContractBonus,
         MoveVisitorStart,
-        MoveVisitorEnd
+        MoveVisitorEnd,
+        UseInfluenceAsMoney,
+        UseInfluenceAsFame,
+        GetFame
     }
 }

@@ -9,13 +9,31 @@ namespace TeamJAMiN.Models.ComponentViewModels
 {
     public class ArtistViewModel
     {
-        public ArtistViewModel(GameArtist artist)
+        public ArtistViewModel(GameArtist artist, GameActionState currentState)
         {
             Artist = artist;
+            SetFormAction(artist, currentState);
             SetStarProperties(artist);
             SetPromotionText(artist);
             BonusClass = IconCss.BonusClass[artist.DiscoverBonus];
         }
+
+        private void SetFormAction(GameArtist artist, GameActionState currentState)
+        {
+            if (currentState == GameActionState.ArtistColony)
+            {
+                if (artist.IsDiscovered)
+                {
+                    FormAction = GameActionState.ArtBuy;
+                }
+                else
+                    FormAction = GameActionState.ArtistDiscover;
+            }
+            else
+                FormAction = GameActionState.Promote;
+        }
+
+        public GameActionState FormAction { get; private set; }
 
         private static string[] StarClass = { "", "star-green-1", "star-green-2", "star-green-3", "star-gold-1", "star-gold-2", "star-celebrity" };
 

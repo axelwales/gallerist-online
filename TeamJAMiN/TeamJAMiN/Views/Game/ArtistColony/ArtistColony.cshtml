@@ -5,26 +5,27 @@
 
 
 @*Artists*@
-@foreach (List<GameArtist> artistList in new List<List<GameArtist>>{ Model.BlueArtists, Model.RedArtists })
+@foreach (List<ArtistViewModel> artistList in new List<List<ArtistViewModel>>{ Model.BlueArtists, Model.RedArtists })
 {
     <div class="col-xs-4">
-        @foreach (GameArtist artist in artistList)
+        @foreach (ArtistViewModel artistModel in artistList)
         {
+            var artist = artistModel.Artist;
             if (Model.IsActivePlayer && Model.IsValidActionState)
             {
-                using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = Model.FormAction, actionLocation = artist.ArtType.ToString() + ":" + artist.Category.ToString() }, FormMethod.Post, new { role = "form" }))
+                using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = artistModel.FormAction, actionLocation = artist.ArtType.ToString() + ":" + artist.Category.ToString() }, FormMethod.Post, new { role = "form" }))
                 {
                     @Html.AntiForgeryToken()
-                    <div class="row tile artist-colony-tile artist-@artist.Category.ToString() artist-@artist.ArtType.ToString() @Model.Game.Highlight(GameActionState.MediaCenter)">
+                    <div class="row tile artist-colony-tile artist-@artist.Category.ToString() artist-@artist.ArtType.ToString() highlight">
                         <input type="submit" class="action-button" value="" />
-                        @Html.Partial(Model.ArtistToPartialViewString[artist], new ArtistViewModel(artist))
+                        @Html.Partial(Model.ArtistToPartialViewString[artist], artistModel)
                     </div>
 
                 }
             }
             else
             {
-                <div class="row tile artist-colony-tile artist-@artist.Category.ToString() artist-@artist.ArtType.ToString()">@Html.Partial(Model.ArtistToPartialViewString[artist], new ArtistViewModel(artist))</div>
+                <div class="row tile artist-colony-tile artist-@artist.Category.ToString() artist-@artist.ArtType.ToString()">@Html.Partial(Model.ArtistToPartialViewString[artist], artistModel)</div>
             }
         }
     </div>

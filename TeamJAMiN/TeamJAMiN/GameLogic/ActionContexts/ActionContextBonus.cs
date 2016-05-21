@@ -8,6 +8,9 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public class BonusContext : ActionContext
     {
+        public bool IsParentState { get; private set; }
+        public ActionContext ParentContext { get; private set; }
+
         public BonusContext(Game game)
             : base(game, new Dictionary<GameActionState, Type> {
                 { GameActionState.GetTicketVip, typeof(GetTicketVip) },
@@ -26,8 +29,37 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 { GameActionState.ChooseVisitorFromPlazaVipInvestor, typeof(ChooseVisitorFromPlazaVipInvestor) },
                 { GameActionState.ChooseVisitorFromBag, typeof(ChooseVisitorFromBag) },
                 { GameActionState.ChooseArtistFame, typeof(ChooseArtistFame) },
+                { GameActionState.GetFame, typeof(GetFame) }
             })
         { }
+
+        protected override GameActionState GetState()
+        {
+            if (!IsParentState)
+                return base.GetState();
+            else
+                return ParentContext.State;
+        }
+
+        protected override void SetState(GameActionState state)
+        {
+            if (NameToState.ContainsKey(state))
+            {
+                IsParentState = false;
+                base.SetState(state);
+            }
+            else
+            {
+                IsParentState = true;
+                ParentContext = ActionContextFactory.GetContext(state, Game);
+            }
+        }
+
+        public override void DoAction(GameAction action)
+        {
+            if(!IsParentState)
+                base.DoAction(action);
+        }
     }
     public abstract class BonusAction : ActionState
     {
@@ -143,6 +175,22 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var player = context.Game.CurrentPlayer;
             var influence = player.GetGalleryVisitorCountByType(VisitorTicketType.vip) + player.GetGalleryVisitorCountByType(VisitorTicketType.collector);
             player.Influence += influence;
+        }
+    }
+
+    public class GetFame : BonusAction
+    {
+        public GetFame()
+        {
+            Name = GameActionState.GetFame;
+            TransitionTo = new HashSet<GameActionState> { };
+        }
+        public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
+        {
+            var player = context.Game.CurrentPlayer;
+            var fame = player.GetGalleryVisitorCountByType(VisitorTicketType.collector);
+            var artist = context.Game.GetArtistByLocationString(context.Action.Parent.Location);
+            artist.Fame += fame;
         }
     }
     public class ChooseContract : BonusAction

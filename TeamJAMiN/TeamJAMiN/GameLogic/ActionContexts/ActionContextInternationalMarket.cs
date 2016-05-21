@@ -77,7 +77,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             //todo send out a visitor from the lobby
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
-            context.DoAction(GameActionState.Pass);
+            AddPassAction(context);
 
         }
         //todo validate location string
@@ -104,7 +104,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             //give bonus
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
-            context.DoAction(GameActionState.Pass);
+            AddPassAction(context);
 
         }
         //todo validate location string

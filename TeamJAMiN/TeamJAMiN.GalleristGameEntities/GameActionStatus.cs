@@ -1,6 +1,6 @@
 ﻿namespace TeamJAMiN.GalleristComponentEntities
 {
-    public enum GameActionPriority
+    public enum GameActionStatus
     {
         Mandatory, Optional, Unavailable, Complete,
         OptionalExclusive

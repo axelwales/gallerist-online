@@ -8,7 +8,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public class ActionContext
     {
-        ActionState _state;
+        protected ActionState _state;
         public Dictionary<GameActionState, Type> NameToState;
         public Game Game { get; set; }
         public GameAction Action { get; set; }
@@ -17,12 +17,22 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             get
             {
-                return _state.Name;
+                return GetState();
             }
             set
             {
-                _state = (ActionState)Activator.CreateInstance(NameToState[value]);
+                SetState(value);
             }
+        }
+
+        protected virtual GameActionState GetState()
+        {
+            return _state.Name;
+        }
+
+        protected virtual void SetState(GameActionState state)
+        {
+            _state = (ActionState)Activator.CreateInstance(NameToState[state]);
         }
 
         protected ActionContext(Game game, Dictionary<GameActionState, Type> NameToState)
@@ -40,19 +50,19 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return _state.IsValidGameState(this);
         }
 
-        public void DoAction(GameActionState state)
+        public virtual void DoAction(GameActionState state)
         {
-            Action = new GameAction { State = state, IsExecutable = true, Location = "" };
-            State = Action.State;
-            _state.DoAction(this);
+            var action = new GameAction { State = state, IsExecutable = true, Location = "" };
+            DoAction(action);
         }
 
-        public void DoAction(GameAction action)
+        public virtual void DoAction(GameAction action)
         {
             Action = action;
             State = action.State;
             _state.DoAction(this);
         }
+
     }
 
     public abstract class ActionState
@@ -64,16 +74,22 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             if(TransitionTo.Count <= 1 )
             {
-                context.Game.CurrentTurn.AddPendingActions(TransitionTo.ToList(), GameActionPriority.Optional, false);
+                context.Game.CurrentTurn.AddPendingActions(TransitionTo.ToList(), GameActionStatus.Optional, false);
             }
             else
             {
-                context.Game.CurrentTurn.AddPendingActions(TransitionTo.ToList(), context.Action, GameActionPriority.OptionalExclusive, false);
+                context.Game.CurrentTurn.AddPendingActions(TransitionTo.ToList(), context.Action, GameActionStatus.OptionalExclusive, PendingPosition.first, false);
             }
         }
         public virtual bool IsValidGameState(ActionContext context)
         {
             return true;
         }
+
+        public void AddPassAction(ActionContext context)
+        {
+            context.Game.CurrentTurn.AddPendingAction(new GameAction { Parent = context.Action, State = GameActionState.Pass, IsExecutable = true }, PendingPosition.last);
+        }
+
     }
 }

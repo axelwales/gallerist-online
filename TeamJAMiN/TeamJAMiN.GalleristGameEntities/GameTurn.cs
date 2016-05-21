@@ -21,15 +21,11 @@ namespace TeamJAMiN.GalleristComponentEntities
         public string PendingActionData { get; set; }
 
         [NotMapped]
-        public GameAction PreviousAction
+        public int CurrentActionOrderNumber
         {
             get
             {
-                if(CompletedActions.Count > 0)
-                {
-                    return CompletedActions[CompletedActions.Count - 1];
-                }
-                return null;
+                return CompletedActions.Count;
             }
         }
 
@@ -68,6 +64,14 @@ namespace TeamJAMiN.GalleristComponentEntities
                     else
                     {
                         _pendingActions = JsonConvert.DeserializeObject<List<GameAction>>(PendingActionData);
+                        foreach(GameAction action in _pendingActions)
+                        {
+                            action.Turn = this;
+                            if(action.ParentId != null)
+                            {
+                                 action.Parent = CompletedActions.FirstOrDefault(a => a.Order == action.ParentId);
+                            }
+                        }
                     }
                 }
                 return _pendingActions;
@@ -95,6 +99,14 @@ namespace TeamJAMiN.GalleristComponentEntities
                     else
                     {
                         _completedActions = JsonConvert.DeserializeObject<List<GameAction>>(CompletedActionData);
+                        foreach (GameAction action in _completedActions)
+                        {
+                            action.Turn = this;
+                            if (action.ParentId != null)
+                            {
+                                action.Parent = CompletedActions.FirstOrDefault(a => a.Order == action.ParentId);
+                            }
+                        }
                     }
                 }
                 return _completedActions;

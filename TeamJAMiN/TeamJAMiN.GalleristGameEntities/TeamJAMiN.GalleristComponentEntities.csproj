@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="Dtos\GameActionDto.cs" />
     <Compile Include="Dtos\GameDto.cs" />
-    <Compile Include="GameActionPriority.cs" />
+    <Compile Include="GameActionStatus.cs" />
     <Compile Include="GameTurn.cs" />
     <Compile Include="GameAction.cs" />
     <Compile Include="GameActionState.cs" />

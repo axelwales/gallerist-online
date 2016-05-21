@@ -31,11 +31,15 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
             DoActionSingle(newAction);
 
-            var nextAction = Game.CurrentTurn.PendingActions.FirstOrDefault(a => a.IsExecutable == true);
-            if (nextAction != null)
+            var nextActions = Game.CurrentTurn.GetNextActions();
+            if (nextActions.Count == 1)
             {
-                Game.CurrentTurn.RemoveAllSiblingActions(nextAction);
-                DoActionSingle(nextAction);
+                var nextAction = nextActions.Single();
+                if (nextAction.IsExecutable)
+                {
+                    Game.CurrentTurn.RemoveAllSiblingActions(nextAction);
+                    DoActionSingle(nextAction);
+                }
             }
             return true;
         }
@@ -53,7 +57,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public bool IsValidTransition(GameAction action)
         {
-            if (Game.CurrentTurn.PendingActions.Any(a => a.State == action.State))
+            if (Game.CurrentTurn.GetNextActions().Any(a => a.State == action.State))
             {
                 return IsValidGameState(action);
             }
@@ -62,7 +66,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public bool IsValidTransition(GameActionState state)
         {
-            if (Game.CurrentTurn.PendingActions.Any(a => a.State == state))
+            if (Game.CurrentTurn.GetNextActions().Any(a => a.State == state))
             {
                 var action = new GameAction { State = state };
                 return IsValidGameState(action);

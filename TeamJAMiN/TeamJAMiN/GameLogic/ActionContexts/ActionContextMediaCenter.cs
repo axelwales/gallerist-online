@@ -50,7 +50,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             //todo allow players to increase fame with influence
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
-            context.DoAction(GameActionState.Pass);
+            AddPassAction(context);
         }
         //todo validate location string
         //todo check is artist can be promoted
@@ -76,7 +76,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             //todo give player hire bonus
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
-            context.DoAction(GameActionState.Pass);
+            AddPassAction(context);
         }
         //todo validate location string
         //todo check is artist can be promoted

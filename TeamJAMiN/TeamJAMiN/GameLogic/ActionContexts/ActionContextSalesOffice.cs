@@ -92,7 +92,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             contract.Location = location;
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
-            context.DoAction(GameActionState.Pass);
+            AddPassAction(context);
         }
         //todo override validate method to check for valid contract location
         //and to check if the location has a contract that can be replaced

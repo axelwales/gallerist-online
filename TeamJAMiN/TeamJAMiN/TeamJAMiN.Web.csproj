@@ -205,6 +205,7 @@
     <Compile Include="GameLogic\ActionContexts\ActionContextSalesOffice.cs" />
     <Compile Include="GameLogic\ComponentManagers\AssistantManager.cs" />
     <Compile Include="GameLogic\ComponentManagers\AuctionManager.cs" />
+    <Compile Include="GameLogic\ComponentManagers\BonusManager.cs" />
     <Compile Include="GameLogic\ComponentManagers\ReputationManager.cs" />
     <Compile Include="GameLogic\ComponentManagers\TicketManager.cs" />
     <Compile Include="GameLogic\ComponentManagers\TurnManager.cs" />
@@ -382,6 +383,7 @@
     <Compile Include="Models\ComponentViewModels\ArtistViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\ArtViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\AuctionLocationViewModel.cs" />
+    <Compile Include="Models\ComponentViewModels\ChooseTicketViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\DraftContractViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InfluenceTrackViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InternationalMarketViewModel.cs" />
@@ -392,6 +394,7 @@
     <Compile Include="Models\ComponentViewModels\ReputationTileLocationViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\ReputationTileViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\SalesOfficeViewModel.cs" />
+    <Compile Include="Models\ComponentViewModels\TicketStacksViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\UnemployedAssistantViewModel.cs" />
     <Compile Include="Models\GameViewHelpers\ActionHighlighter.cs" />
     <Compile Include="Models\GameViewHelpers\ContractSort.cs" />
@@ -610,6 +613,7 @@
     <Content Include="Views\Manage\ManageProfile.cshtml" />
     <Content Include="Views\Game\InternationalMarket\AuctionLocation.cshtml" />
     <Content Include="Views\Game\PlayerBoard\ReputationTileLocation.cshtml" />
+    <Content Include="Views\Game\TicketStacks\TicketStacks.cshtml" />
     <Content Include="Views\Account\RegistrationForm.cshtml" />
   </ItemGroup>
   <ItemGroup>

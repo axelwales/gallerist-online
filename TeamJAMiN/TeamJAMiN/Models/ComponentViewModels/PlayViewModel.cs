@@ -17,6 +17,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
             SalesOfficeModel = new SalesOfficeViewModel(userName, game);
             InternationalMarketModel = new InternationalMarketViewModel(userName, game);
             ArtistColonyModel = new ArtistColonyViewModel(userName, game);
+            TicketStacksModel = new TicketStacksViewModel(userName, game);
 
             InfluenceTrackModel = new InfluenceTrackViewModel(game);
 
@@ -78,6 +79,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public SalesOfficeViewModel SalesOfficeModel { get; private set; }
         public InternationalMarketViewModel InternationalMarketModel { get; private set; }
         public ArtistColonyViewModel ArtistColonyModel { get; private set; }
+        public TicketStacksViewModel TicketStacksModel { get; private set; }
 
         public InfluenceTrackViewModel InfluenceTrackModel { get; private set; }
 

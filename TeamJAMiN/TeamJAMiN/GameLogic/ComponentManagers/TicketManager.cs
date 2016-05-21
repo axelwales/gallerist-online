@@ -95,5 +95,52 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 player.Game.AvailableVipTickets -= 1;
             player.VipTickets += 1;
         }
+
+        public static GameActionState GetStateByTicketList(List<VisitorTicketType> ticketList)
+        {
+            if (ticketList.Count() == 3)
+            {
+                return GameActionState.ChooseTicketAny;
+            }
+            if (ticketList.Count() == 1)
+            {
+                var ticket = ticketList.Single();
+                if (ticket == VisitorTicketType.investor)
+                {
+                    return GameActionState.GetTicketInvestor;
+                }
+                if (ticket == VisitorTicketType.collector)
+                {
+                    return GameActionState.GetTicketCollector;
+                }
+                if (ticket == VisitorTicketType.vip)
+                {
+                    return GameActionState.GetTicketVip;
+                }
+            }
+            string[] stringArray = { "", "" };
+            foreach (VisitorTicketType ticket in ticketList)
+            {
+                if (ticket == VisitorTicketType.investor)
+                {
+                    stringArray[1] = "Investor";
+                }
+                if (ticket == VisitorTicketType.collector)
+                {
+                    stringArray[0] = "Collector";
+                }
+                if (ticket == VisitorTicketType.vip)
+                {
+                    stringArray[1] = "Vip";
+                }
+            }
+            string result = "ChooseTicket";
+            foreach (string s in stringArray)
+            {
+                if (s != "")
+                    result += s;
+            }
+            return (GameActionState)Enum.Parse(typeof(GameActionState), result);
+        }
     }
 }

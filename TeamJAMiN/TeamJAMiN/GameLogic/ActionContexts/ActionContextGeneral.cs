@@ -14,7 +14,9 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             {
                 { GameActionState.ChooseLocation, typeof(ChooseLocation) },
                 { GameActionState.Pass, typeof(Pass) },
-                { GameActionState.GameStart, typeof(GameStart) }
+                { GameActionState.GameStart, typeof(GameStart) },
+                { GameActionState.UseInfluenceAsMoney, typeof(UseInfluenceAsMoney) },
+                { GameActionState.UseInfluenceAsFame, typeof(UseInfluenceAsFame) }
             })
         { }
 
@@ -81,32 +83,47 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         }
     }
 
-    public interface IMoneyTransaction
+    public interface IMoneyTransactionState
+    {
+        int GetCost(ActionContext context);
+        void CleanUp(ActionContext context);
+    }
+
+    public interface IMoneyTransactionContext
     {
         int GetCost();
-        bool PlayerHasMoney(Player player);
+        bool IsMoneyTransaction();
+        void CleanUp();
     }
 
     public class UseInfluenceAsMoney : ActionState
     {
         public override void DoAction<InternationalMarketContext>(InternationalMarketContext context)
         {
-            var parent = (IMoneyTransaction)context.Action.Parent;
-            var cost = parent.GetCost();
+            var parentState = context.Action.Parent.State;
+            var parentContext = (IMoneyTransactionContext)ActionContextFactory.GetContext(parentState, context.Game);
+            var cost = parentContext.GetCost();
             int influenceAsMoney = int.Parse(context.Action.Location);
             context.Game.CurrentPlayer.UseInfluenceAsMoney(influenceAsMoney);
             cost -= influenceAsMoney;
             context.Game.CurrentPlayer.Money -= cost;
+            parentContext.CleanUp();
         }
 
         public override bool IsValidGameState(ActionContext context)
         {
-            if ( context.Action.Parent is IMoneyTransaction == false )
+            var parentState = context.Action.Parent.State;
+            var parentContext = ActionContextFactory.GetContext(parentState, context.Game);
+            if (parentContext is IMoneyTransactionContext == false )
             {
                 return false;
             }
-            var parent = (IMoneyTransaction)context.Action.Parent;
-            var cost = parent.GetCost();
+            var transactionContext = (IMoneyTransactionContext)parentContext;
+            if (transactionContext.IsMoneyTransaction() == false)
+            {
+                return false;
+            }
+            var cost = transactionContext.GetCost();
             int influenceAsMoney;
             var locationIsInt = int.TryParse(context.Action.Location, out influenceAsMoney);
             if (locationIsInt == false)
