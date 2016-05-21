@@ -8,6 +8,9 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public class BonusContext : ActionContext
     {
+        public bool IsParentState { get; private set; }
+        public ActionContext ParentContext { get; private set; }
+
         public BonusContext(Game game)
             : base(game, new Dictionary<GameActionState, Type> {
                 { GameActionState.GetTicketVip, typeof(GetTicketVip) },
@@ -29,6 +32,34 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 { GameActionState.GetFame, typeof(GetFame) }
             })
         { }
+
+        protected override GameActionState GetState()
+        {
+            if (!IsParentState)
+                return base.GetState();
+            else
+                return ParentContext.State;
+        }
+
+        protected override void SetState(GameActionState state)
+        {
+            if (NameToState.ContainsKey(state))
+            {
+                IsParentState = false;
+                base.SetState(state);
+            }
+            else
+            {
+                IsParentState = true;
+                ParentContext = ActionContextFactory.GetContext(state, Game);
+            }
+        }
+
+        public override void DoAction(GameAction action)
+        {
+            if(!IsParentState)
+                base.DoAction(action);
+        }
     }
     public abstract class BonusAction : ActionState
     {

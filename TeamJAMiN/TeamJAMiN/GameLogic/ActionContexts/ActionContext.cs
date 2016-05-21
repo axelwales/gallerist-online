@@ -17,12 +17,22 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             get
             {
-                return _state.Name;
+                return GetState();
             }
             set
             {
-                _state = (ActionState)Activator.CreateInstance(NameToState[value]);
+                SetState(value);
             }
+        }
+
+        protected virtual GameActionState GetState()
+        {
+            return _state.Name;
+        }
+
+        protected virtual void SetState(GameActionState state)
+        {
+            _state = (ActionState)Activator.CreateInstance(NameToState[state]);
         }
 
         protected ActionContext(Game game, Dictionary<GameActionState, Type> NameToState)
@@ -40,14 +50,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return _state.IsValidGameState(this);
         }
 
-        public void DoAction(GameActionState state)
+        public virtual void DoAction(GameActionState state)
         {
-            Action = new GameAction { State = state, IsExecutable = true, Location = "" };
-            State = Action.State;
-            _state.DoAction(this);
+            var action = new GameAction { State = state, IsExecutable = true, Location = "" };
+            DoAction(action);
         }
 
-        public void DoAction(GameAction action)
+        public virtual void DoAction(GameAction action)
         {
             Action = action;
             State = action.State;

@@ -44,7 +44,9 @@ namespace TeamJAMiN.Models.ComponentViewModels
             IsValidActionState = ActionManager.IsValidTicketBonus(game, type);
             if (IsValidActionState)
             {
-                State = game.CurrentTurn.CurrentAction.State;
+                var nextAction = game.CurrentTurn.GetNextActions().FirstOrDefault();
+                State = nextAction
+                    .State;
                 ActionLocation = type.ToString();
             }
             else
