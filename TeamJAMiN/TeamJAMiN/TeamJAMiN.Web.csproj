@@ -385,6 +385,7 @@
     <Compile Include="Models\ComponentViewModels\AuctionLocationViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\ChooseTicketViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\DraftContractViewModel.cs" />
+    <Compile Include="Models\ComponentViewModels\InfluenceTrackViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InternationalMarketViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\PlayerArtViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\PlayerBoardViewModel.cs" />
@@ -399,6 +400,7 @@
     <Compile Include="Models\GameViewHelpers\ContractSort.cs" />
     <Compile Include="Models\GameViewHelpers\FormHelper.cs" />
     <Compile Include="Models\GameViewHelpers\IconCss.cs" />
+    <Compile Include="Models\GameViewHelpers\ToolTipStrings.cs" />
     <Compile Include="Models\GameViewHelpers\VisitorSort.cs" />
     <Compile Include="Models\GameViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -452,6 +454,10 @@
     <Content Include="Content\Icons\Influence.svg" />
     <Content Include="Content\Icons\InfluenceFive.svg" />
     <Content Include="Content\Icons\InfluenceFour.svg" />
+    <Content Include="Content\Icons\InfluenceMarkerBlue.svg" />
+    <Content Include="Content\Icons\InfluenceMarkerOrange.svg" />
+    <Content Include="Content\Icons\InfluenceMarkerPurple.svg" />
+    <Content Include="Content\Icons\InfluenceMarkerYellow.svg" />
     <Content Include="Content\Icons\InfluenceOne.svg" />
     <Content Include="Content\Icons\InfluenceThree.svg" />
     <Content Include="Content\Icons\InfluenceTwo.svg" />
@@ -516,6 +522,7 @@
     <Content Include="Content\toastr.less" />
     <Content Include="Scripts\Gallerist\gallerist-qtip.js" />
     <Content Include="Scripts\Gallerist\moment-date-format.js" />
+    <Content Include="Scripts\Gallerist\updater.js" />
     <Content Include="Scripts\GameList\game.list.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -607,6 +614,7 @@
     <Content Include="Views\Game\InternationalMarket\AuctionLocation.cshtml" />
     <Content Include="Views\Game\PlayerBoard\ReputationTileLocation.cshtml" />
     <Content Include="Views\Game\TicketStacks\TicketStacks.cshtml" />
+    <Content Include="Views\Account\RegistrationForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

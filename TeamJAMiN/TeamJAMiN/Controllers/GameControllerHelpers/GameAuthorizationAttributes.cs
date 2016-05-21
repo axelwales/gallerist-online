@@ -98,11 +98,14 @@ namespace TeamJAMiN.Controllers.GameControllerHelpers
                     }
                     else //check kicked out action
                     {
-                        var kickedOutPlayerUserId = game.Players.Single(m => m.Id == game.KickedOutPlayerId).UserId;
-                        if (currentUser.Id == kickedOutPlayerUserId)
+                        var kickedOutPlayerUser = game.Players.SingleOrDefault(m => m.Id == game.KickedOutPlayerId);
+                        if (kickedOutPlayerUser != null)
                         {
-                            isUsersTurn = true;
-                        }
+                            if (currentUser.Id == kickedOutPlayerUser.UserId)
+                            {
+                                isUsersTurn = true;
+                            }
+                        }   
                     }
                 }
             }

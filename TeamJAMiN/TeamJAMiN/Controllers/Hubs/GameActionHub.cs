@@ -17,9 +17,9 @@ namespace TeamJAMiN.Controllers.Hubs
 
         }
 
-        public void Update(string action)
+        public void Update(string[] action)   //action = {[param1],[param2]}
         {
-            Clients.Others.serverResponse(action);
+            Clients.Others.update(action[0], action[1]);
         }
 
         public void RefreshGame(List<string> userIds)

@@ -19,6 +19,8 @@ namespace TeamJAMiN.Models.ComponentViewModels
             ArtistColonyModel = new ArtistColonyViewModel(userName, game);
             TicketStacksModel = new TicketStacksViewModel(userName, game);
 
+            InfluenceTrackModel = new InfluenceTrackViewModel(game);
+
             SetLocationViewModels(userName, game);
             SetGalleryModels(game);
 
@@ -78,6 +80,8 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public InternationalMarketViewModel InternationalMarketModel { get; private set; }
         public ArtistColonyViewModel ArtistColonyModel { get; private set; }
         public TicketStacksViewModel TicketStacksModel { get; private set; }
+
+        public InfluenceTrackViewModel InfluenceTrackModel { get; private set; }
 
         private List<PlayerLocation> ActionList = new List<PlayerLocation> { PlayerLocation.SalesOffice, PlayerLocation.ArtistColony, PlayerLocation.InternationalMarket, PlayerLocation.MediaCenter };
         public List<ActionSpaceViewModel> LocationViewModels { get; private set; }

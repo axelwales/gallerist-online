@@ -2,8 +2,8 @@
 
 $(function () {
     var actionManager = $.connection.gameActionHub;
-    actionManager.client.refresh = function () {
-        window.location.reload(true);
+    actionManager.client.update = function (elementIdentifier, newElement) {
+        updateHelper(elementIdentifier, newElement);
     };
     $.connection.hub.logging = true;
     $.connection.hub.start().done(function () {

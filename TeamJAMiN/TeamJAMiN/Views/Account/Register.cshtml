@@ -3,57 +3,36 @@
     ViewBag.Title = "Register";
 }
 
-<h2>@ViewBag.Title.</h2>
-
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    <h4>Create a new account.</h4>
-    <hr />
-    <div class="form-group">
-        @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+<div class="row">
+    <div class="col-sm-6">
+        <div class="jumbotron center-text">
+            <h1>Welcome to The Gallerist Online</h1>
+            <p class="lead">This is an online multiplayer board game adapted from a real board game into an online format by Team JAMiN for CS 435</p>
+            <p><a href="https://boardgamegeek.com/boardgame/125153/gallerist" target="_blank" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
         </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-        </div>
+    <div class="col-sm-6">
+        @Html.Partial("~/Views/Account/RegistrationForm.cshtml", Model)
     </div>
-    @Html.ValidationSummary("", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
-        </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <h2>The Team</h2>
+        <ul style="list-style:none;">
+            <li><a href="https://github.com/mbrajk" target="_blank">Mike Brajkovich</a></li>
+            <li><a href="https://github.com/axelwales" target="_blank">Axel Wales</a></li>
+            <li><a href="https://github.com/JBorders3010" target="_blank">Jonah Borders</a></li>
+            <li><a href="https://github.com/ngrudzinski" target="_blank">Nathan Grudzinski</a></li>
+        </ul>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-        </div>
+    <div class="col-md-4">
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-        </div>
+    <div class="col-md-4">
+        <h2>Game Statistics</h2>
+        <ul style="list-style:none;">
+            <li style="margin-bottom:5px;">Numer of Games: @ViewBag.NumberOfGames</li>
+            <li style="margin-bottom:5px;">Number of Players: @ViewBag.NumberOfPlayers</li>
+            <li style="margin-bottom:5px;">Random Number: @ViewBag.RandomNumber</li>
+        </ul>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
-        </div>
-    </div>
-}
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+</div>

@@ -21,7 +21,16 @@
             foreach (var myGame in ViewBag.myGames)
             {
                 <div class="col-xs-12">
-                    <div class="col-xs-3 game-list-field">@myGame.Name</div>
+                    <div class="col-xs-3 game-list-field">
+                        @if (myGame.isStarted)
+                        {
+                            <a href="@myGame.Url">@myGame.Name</a>
+                        }
+                        else
+                        {
+                            @myGame.Name
+                        }
+                    </div>
                     <div class="col-xs-2 game-list-field">@myGame.PlayersString</div>
                     <div class="col-xs-2 game-list-field" data-duration="@myGame.MaxTurnLength" title="@myGame.MaxTurnLength minutes"></div>
                     <div class="col-xs-2 game-list-field" data-utcdate="@myGame.CreatedTime"></div>
@@ -35,9 +44,13 @@
                                     <input type="submit" class="btn btn-sm btn-success " value="Start" />
                                 }
                             }
-                            else if (myGame.isStarted)
+                            else if (!myGame.isStarted)
                             {
-                                <a href="@myGame.Url" class="btn btn-sm btn-success">Open</a>
+                                using (Html.BeginForm("Leave", "Game", new { id = myGame.Id }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="submit" class="btn btn-sm btn-danger" value="Leave" />
+                                }
                             }
                         </div>
                         <div class="col-xs-6">
@@ -61,7 +74,7 @@
         }
     </div>
 </div>
-   
+
 <h2>All Games</h2>
 
 <div class="jumbotron row">
@@ -71,7 +84,7 @@
             <div class="col-xs-2 game-list-field">Number of Players</div>
             <div class="col-xs-2 game-list-field">Turn Length</div>
             <div class="col-xs-2 game-list-field">Created</div>
-            <div class="col-xs-2 game-list-field">Actions</div>
+            <div class="col-xs-3 game-list-field">Actions</div>
         </div>
         <div class="col-xs-12">
             <hr class="margin-top-bottom-10" />
@@ -85,16 +98,18 @@
                     <div class="col-xs-2 game-list-field">@game.PlayersString</div>
                     <div class="col-xs-2 game-list-field" data-duration="@game.MaxTurnLength" title="@game.MaxTurnLength minutes"></div>
                     <div class="col-xs-2 game-list-field" data-utcdate="@game.CreatedTime"></div>
-                    <div class="col-xs-2 no-padding">
-                        @if (game.isJoinable)
-                        {
-                            using (Html.BeginForm("Join", "Game", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    <div class="col-xs-3 no-padding">
+                        <div class="col-xs-6">
+                            @if (game.isJoinable)
                             {
-                                @Html.AntiForgeryToken()
-                                <input class="form-control hidden" type="hidden" name="id" value="@game.Id" />
-                                <input type="submit" class="btn btn-sm btn-success col-xs-5" value="Join" />
+                                using (Html.BeginForm("Join", "Game", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input class="form-control hidden" type="hidden" name="id" value="@game.Id" />
+                                    <input type="submit" class="btn btn-sm btn-success" value="Join" />
+                                }
                             }
-                        }
+                        </div>
                     </div>
                 </div>
                 <div class="col-xs-12">
@@ -104,7 +119,7 @@
             }
         }
     </div>
- </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/gamelist")

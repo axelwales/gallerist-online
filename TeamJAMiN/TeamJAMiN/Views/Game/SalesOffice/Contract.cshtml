@@ -1,14 +1,16 @@
 ﻿@model TeamJAMiN.Models.ComponentViewModels.DraftContractViewModel
 
-<div class="row no-gutter contract-art-row">
-    @* Art Type *@
-    <div class="col-xs-12 no-padding">
-        <div class="art-icon @Model.Contract.Art.ToString()-icon"></div>
+<div class="contract-card tile help-tooltip" data-title="@Model.TooltipTitle" data-text="@Model.TooltipSpecificText">
+    <div class="row no-gutter contract-art-row">
+        @* Art Type *@
+        <div class="col-xs-12 no-padding">
+            <div class="art-icon @Model.Contract.Art.ToString()-icon"></div>
+        </div>
     </div>
-</div>
-<div class="row no-gutter contract-bonus-row">
-    @* Contract Action *@
-    <div class="col-xs-12 no-padding">
-        <div class="contract-bonus @Model.BonusClass"></div>
+    <div class="row no-gutter contract-bonus-row">
+        @* Contract Action *@
+        <div class="col-xs-12 no-padding">
+            <div class="contract-bonus @Model.BonusClass"></div>
+        </div>
     </div>
 </div>

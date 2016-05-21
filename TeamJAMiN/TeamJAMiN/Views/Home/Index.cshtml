@@ -1,31 +1,14 @@
-﻿@{
+﻿@using TeamJAMiN.Models
+@{
     ViewBag.Title = "Team JAMiN";
+    Layout = null;
 }
 
-<div class="jumbotron center-text">
-    <h1>Welcome to The Gallerist Online</h1>
-    <p class="lead">This is an online multiplayer board game adapted from a real board game into an online format by Team JAMiN for CS 435</p>
-    <p><a href="https://boardgamegeek.com/boardgame/125153/gallerist" target="_blank" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-
-<div class="row">
-    <div class="col-md-4">
-        <h2>The Team</h2>
-        <ul style="list-style:none;">
-            <li><a href="https://github.com/zerosauce" target="_blank">Mike Brajkovich</a></li>
-            <li><a href="https://github.com/ngrudzinski" target="_blank">Nathan Grudzinski</a></li>
-            <li><a href="https://github.com/axelwales" target="_blank">Axel Wales</a></li>
-            <li><a href="https://github.com/JBorders3010" target="_blank">Jonah Borders</a></li>
-        </ul>
-    </div>
-    <div class="col-md-4">
-    </div>
-    <div class="col-md-4">
-        <h2>Game Statistics</h2>
-        <ul style="list-style:none;">
-            <li style="margin-bottom:5px;">Numer of Games: @ViewBag.NumberOfGames</li>
-            <li style="margin-bottom:5px;">Number of Players: @ViewBag.NumberOfPlayers</li>
-            <li style="margin-bottom:5px;">Random Number: @ViewBag.RandomNumber</li>
-        </ul>
-    </div>
-</div>
+@if (Request.IsAuthenticated)
+{
+    @Html.Action("List","Game")
+}
+else
+{
+    @Html.Action("Register", "Account")
+}

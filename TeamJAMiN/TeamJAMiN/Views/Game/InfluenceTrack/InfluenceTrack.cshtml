@@ -1,9 +1,8 @@
-﻿@using TeamJAMiN.Controllers.GameLogicHelpers
-@*Influence Track*@
+﻿@using TeamJAMiN.Models.ComponentViewModels
+@model InfluenceTrackViewModel
 
-@{  int i = 0;
-    int money = 0;
-}
+@*Influence Track*@
+@{ var spaceEnum = Model.Spaces.GetEnumerator(); }
 <div class="row no-gutter">
     @for (int j = 0; j < 4; j++)
     {
@@ -14,30 +13,16 @@
                     <div class="row no-gutter">
                         @for (int m = 0; m < 3; m++)
                         {
-                            var moneyHTML = "";
-                            var starHTML = "";
-                            var kickedClass = "";
-                            if (GameInfluenceTrack.InfluenceToMoney[money] == i)
-                            {
-                                moneyHTML = @"<div class=""influence-money-icon money-" + money++ + @"""></div>";
-                            }
-                            if ( i % 5 == 0 && i != 35)
-                            {
-                                starHTML = @"<div class=""star-white influence-star-icon""></div>";
-                                kickedClass = "has-star ";
-                            }
-                            if ( i % 5 == 0 && i != 0)
-                            {
-                                kickedClass += "influence-kicked-out";
-                            }
-                            else if (i==0)
-                            {
-                                kickedClass += "influence-icon";
-                            }
+                            spaceEnum.MoveNext();
+                            var space = spaceEnum.Current;
                             <div class="col-xs-4">
-                                <div id="influence-track-@i" class="@kickedClass influence-track-space">@Html.Raw(starHTML)<div class="influence-track-number">@if (i != 0) {@i}</div>@Html.Raw(moneyHTML)</div>
+                                <div id="influence-track-@space.Index" class="@space.KickedOutCssClass influence-track-space">
+                                    @Html.Raw(space.StarHtml)
+                                    <div class="influence-track-number">@space.DisplayIndex</div>
+                                    @Html.Raw(space.InfluenceMarkerHtml)
+                                    @Html.Raw(space.MoneyHtml)
+                                </div>
                             </div>
-                            i++;
                         }
                     </div>
                 </div>

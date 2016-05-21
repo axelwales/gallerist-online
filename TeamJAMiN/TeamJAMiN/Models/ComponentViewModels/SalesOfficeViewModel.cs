@@ -41,6 +41,8 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public bool IsActivePlayer { get; private set; }
         public bool DrawIsValidActionState { get; private set; }
         public bool DraftIsValidActionState { get; private set; }
+        public string TooltipTitle = "Draw Cards";
+        public string TooltipText = "If active you can click here to draw four (4) new contract cards";
 
         public Game Game { get; private set; }
         public GameActionState DrawState { get; private set; }

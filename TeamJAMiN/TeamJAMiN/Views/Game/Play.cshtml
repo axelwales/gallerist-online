@@ -7,8 +7,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container gallerist-game-view">
-    <div class="row">
+<div class="gallerist-game-view">
+    <div class="row no-margin">
         <div class="col-md-4">
             <div class="row board-region @Model.Game.Highlight(GameActionState.SalesOffice)" id="sales-office">
                 @*Sales Office (Contracts)*@
@@ -26,7 +26,7 @@
             @{ 
                 var actionEnum = Model.LocationViewModels.GetEnumerator();
             }
-            <div class="row">
+            <div class="row top-action-row">
                 <div class="col-xs-6">
                     @{ actionEnum.MoveNext(); }
                     @Html.Partial("~/Views/Game/ActionSpaces/ActionSpace.cshtml", actionEnum.Current)
@@ -91,11 +91,11 @@
             </div>
         </div>
     </div>
-    <div class="row influence-track">
+    <div class="row influence-track no-margin">
         @* Influence Track *@
-        @Html.Partial("~/Views/Game/InfluenceTrack/InfluenceTrack.cshtml")
+        @Html.Partial("~/Views/Game/InfluenceTrack/InfluenceTrack.cshtml", Model.InfluenceTrackModel)
     </div>
-    <div class="row board-region player-board">
+    <div class="row board-region player-board no-margin">
         @{ foreach (PlayerBoardViewModel boardModel in Model.PlayerBoardModels)
             {
                 @Html.Partial("~/Views/Game/PlayerBoard/PlayerBoard.cshtml", boardModel);

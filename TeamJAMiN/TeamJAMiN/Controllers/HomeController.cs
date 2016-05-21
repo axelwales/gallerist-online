@@ -12,12 +12,7 @@ namespace TeamJAMiN.Controllers
     {
         public ActionResult Index()
         {
-            using (var galleristContext = new GalleristComponentsDbContext()) {
-                ViewBag.NumberOfPlayers = galleristContext.Players.DistinctBy(m => m.UserId).Count();
-                ViewBag.NumberOfGames = galleristContext.Games.Count();
-                ViewBag.RandomNumber = new Random().Next(100);
-                return View();
-            }
+            return View();
         }
 
         public ActionResult GameList()

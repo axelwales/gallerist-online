@@ -1,5 +1,6 @@
 ﻿@model SalesOfficeViewModel
 @using TeamJAMiN.Models.ComponentViewModels
+@using TeamJAMiN.Models.GameViewHelpers
 
 @*Contracts Container*@
 <div class="row no-gutter">
@@ -10,7 +11,7 @@
                 using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = Model.DrawState }, FormMethod.Post, new { role = "form" }))
                 {
                     @Html.AntiForgeryToken()
-                    <div class="contract-card tile contract-draw-deck">
+                    <div class="contract-card tile contract-draw-deck help-tooltip" data-title="@Model.TooltipTitle" data-text="@Model.TooltipText">
                         <input type="submit" class="action-button" value="" />
                         <div class="contract-draw-title contract-draw-deck-section">Draw</div>
                         <div class="draw-contract-icon contract-draw-deck-section"></div>
@@ -20,7 +21,7 @@
             }
             else
             {
-                <div class="contract-card tile contract-draw-deck">
+                <div class="contract-card tile contract-draw-deck help-tooltip" data-title="@Model.TooltipTitle" data-text="@Model.TooltipText">
                     <div class="contract-draw-title contract-draw-deck-section">Draw</div>
                     <div class="draw-contract-icon contract-draw-deck-section"></div>
                     <div class="contract-draw-count contract-draw-deck-section">x @Model.DrawCount</div>
@@ -34,20 +35,11 @@
             <div class="col-xs-3 no-padding">
                 @if (Model.IsActivePlayer && Model.DraftIsValidActionState)
                 {
-                    using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = contractModel.State, actionLocation = contractModel.Location }, FormMethod.Post, new { role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <div class="contract-card tile">
-                            <input type="submit" class="action-button" value="" />
-                            @Html.Partial("~/Views/Game/SalesOffice/Contract.cshtml", contractModel)
-                        </div>
-                    }
+                    Html.GetActionForm("~/Views/Game/SalesOffice/Contract.cshtml", Model.Game, contractModel.State, contractModel.Location.ToString(), contractModel);
                 }
                 else
                 {
-                    <div class="contract-card tile">
-                        @Html.Partial("~/Views/Game/SalesOffice/Contract.cshtml", contractModel)
-                    </div>
+                    @Html.Partial("~/Views/Game/SalesOffice/Contract.cshtml", contractModel)
                 }
             </div>
         }

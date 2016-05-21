@@ -179,6 +179,10 @@ namespace TeamJAMiN.Controllers
                             UserId = identityContext.Users.First(m => m.UserName == User.Identity.Name).Id,
                             UserName = User.Identity.Name
                         });
+
+                        PushHelper singleton = PushHelper.GetPushEngine();
+                        singleton.RefreshGameList(gameResponse.Game.Players.Where(m => m.UserName != User.Identity.Name).Select(p => p.UserName).ToList());
+
                         ViewBag.userName = User.Identity.Name;
                         galleristContext.SaveChanges();
                         return Redirect("/Game/List");
@@ -266,18 +270,19 @@ namespace TeamJAMiN.Controllers
                 var gameResponse = GameManager.GetGame(id, galleristContext);
                 var game = gameResponse.Game;
 
-                //todo check if we need to save changes before doing setup turn. 
-                game.SetNextPlayer();
-                game.SetupTurn(game.CurrentTurn);//todo: see if setup turn is the way we actually setup next turn
+                if (game.IsStarted)
+                {
+                    ViewBag.Message = "Cannot leave in progress game";
+                    ViewBag.Title = "Error";
+                    return View("GameError");
+                }
 
                 var playerLeaving = game.Players.First(m => m.UserName == User.Identity.Name);
-                game.Players.Remove(playerLeaving);
-                game.PlayerOrder.Remove(playerLeaving);
-                game.MaxNumberOfPlayers = game.MaxNumberOfPlayers--;
-                //todo: decide if this is the best course of action for leaving a game                
+                galleristContext.Players.Remove(playerLeaving);
+                galleristContext.SaveChanges();
 
                 PushHelper singleton = PushHelper.GetPushEngine();
-                singleton.RefreshGame(game.Players.Where(p => p.UserName != User.Identity.Name).Select(p => p.UserName).ToList()); //refresh game for players left in game
+                singleton.RefreshGameList(game.Players.Select(p => p.UserName).ToList());
                 return Redirect("~/Game/List/");
             }
 

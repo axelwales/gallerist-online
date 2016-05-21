@@ -38,5 +38,11 @@ namespace TeamJAMiN.Controllers.Hubs.HubHelpers
             var hubContext = GetHub<GameActionHub>();
             hubContext.Clients.Users(userIds).refresh();
         }
+
+        public void RefreshGameList(List<string> userIds)
+        {
+            var hubContext = GetHub<GameListHub>();
+            hubContext.Clients.Users(userIds).refresh();
+        }
     }
 }

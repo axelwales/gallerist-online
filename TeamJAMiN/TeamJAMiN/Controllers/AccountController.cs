@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using TeamJAMiN.Models;
+using TeamJAMiN.DataContexts;
+using MoreLinq;
 
 namespace TeamJAMiN.Controllers
 {
@@ -139,7 +141,13 @@ namespace TeamJAMiN.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            using (var galleristContext = new GalleristComponentsDbContext())
+            {
+                ViewBag.NumberOfPlayers = galleristContext.Players.DistinctBy(m => m.UserId).Count();
+                ViewBag.NumberOfGames = galleristContext.Games.Count();
+                ViewBag.RandomNumber = new Random().Next(100);
+                return View();
+            }
         }
 
         //
