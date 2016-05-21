@@ -36,6 +36,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public GameActionState State { get; private set; }
         public string ActionLocation { get; private set; }
 
+        public string TicketCssClass { get; private set; }
         public int AvailableTickets { get; private set; }
         
         public TicketStackViewModel(string userName, Game game, VisitorTicketType type)
@@ -55,6 +56,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 ActionLocation = "";
             }
 
+            TicketCssClass = "ticket-" + type.ToString().ToLower();
             SetAvailableTickets(game, type);
         }
 
