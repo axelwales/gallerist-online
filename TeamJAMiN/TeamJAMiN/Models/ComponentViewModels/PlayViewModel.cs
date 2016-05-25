@@ -19,7 +19,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
             ArtistColonyModel = new ArtistColonyViewModel(userName, game);
             TicketStacksModel = new TicketStacksViewModel(userName, game);
 
-            InfluenceTrackModel = new InfluenceTrackViewModel(game);
+            InfluenceTrackModel = new InfluenceTrackViewModel(userName, game);
 
             SetLocationViewModels(userName, game);
             SetGalleryModels(game);

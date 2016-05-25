@@ -1,0 +1,10 @@
+﻿@model TeamJAMiN.Models.ComponentViewModels.InfluenceSpaceViewModel
+
+<div class="col-xs-4">
+    <div id="influence-track-@Model.Index" class="@Model.KickedOutCssClass influence-track-space">
+        @Html.Raw(Model.StarHtml)
+        <div class="influence-track-number">@Model.DisplayIndex</div>
+        @Html.Raw(Model.InfluenceMarkerHtml)
+        @Html.Raw(Model.MoneyHtml)
+    </div>
+</div>

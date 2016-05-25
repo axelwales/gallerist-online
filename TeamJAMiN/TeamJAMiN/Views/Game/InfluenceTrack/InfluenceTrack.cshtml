@@ -1,4 +1,5 @@
 ﻿@using TeamJAMiN.Models.ComponentViewModels
+@using TeamJAMiN.Models.GameViewHelpers
 @model InfluenceTrackViewModel
 
 @*Influence Track*@
@@ -15,14 +16,15 @@
                         {
                             spaceEnum.MoveNext();
                             var space = spaceEnum.Current;
-                            <div class="col-xs-4">
-                                <div id="influence-track-@space.Index" class="@space.KickedOutCssClass influence-track-space">
-                                    @Html.Raw(space.StarHtml)
-                                    <div class="influence-track-number">@space.DisplayIndex</div>
-                                    @Html.Raw(space.InfluenceMarkerHtml)
-                                    @Html.Raw(space.MoneyHtml)
-                                </div>
-                            </div>
+                            if (space.HasActionForm)
+                            {
+                                Html.GetActionForm("~/Views/Game/InfluenceTrack/InfluenceTrackSpace.cshtml", Model.Game, space.State, space.Location, space);
+
+                            }
+                            else
+                            {
+                                @Html.Partial("~/Views/Game/InfluenceTrack/InfluenceTrackSpace.cshtml", space)
+                            }
                         }
                     </div>
                 </div>

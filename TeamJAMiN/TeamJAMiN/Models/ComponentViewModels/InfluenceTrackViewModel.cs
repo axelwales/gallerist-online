@@ -4,13 +4,15 @@ using System.Linq;
 using System.Web;
 using TeamJAMiN.Controllers.GameLogicHelpers;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.Models.GameViewHelpers;
 
 namespace TeamJAMiN.Models.ComponentViewModels
 {
     public class InfluenceTrackViewModel
     {
-        public InfluenceTrackViewModel(Game game)
+        public InfluenceTrackViewModel(string userName, Game game)
         {
+            Game = game;
             Spaces = new List<InfluenceSpaceViewModel>();
             var currentPlayerInfluence = game.CurrentPlayer.Influence;
 
@@ -19,19 +21,20 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 if (game.Players.Any(p => p.Influence == i))
                 {
                     var playerColors = game.Players.Where(p => p.Influence == i).Select(p => p.Color).ToList();
-                    Spaces.Add(new InfluenceSpaceViewModel(i, currentPlayerInfluence, playerColors ));
+                    Spaces.Add(new InfluenceSpaceViewModel(i, currentPlayerInfluence, userName, game, playerColors ));
                 }
                 else
-                    Spaces.Add(new InfluenceSpaceViewModel(i, currentPlayerInfluence));
+                    Spaces.Add(new InfluenceSpaceViewModel(i, currentPlayerInfluence, userName, game));
             }
         }
 
+        public Game Game { get; private set; }
         public List<InfluenceSpaceViewModel> Spaces { get; private set; }
     }
 
     public class InfluenceSpaceViewModel
     {
-        public InfluenceSpaceViewModel(int index, int  currentPlayerInfluence, List<PlayerColor> colors) : this(index, currentPlayerInfluence)
+        public InfluenceSpaceViewModel(int index, int  currentPlayerInfluence, string userName, Game game, List<PlayerColor> colors) : this(index, currentPlayerInfluence, userName, game)
         {
             var ulHtml = "<ul class=\"player-influence-markers\">";
             foreach (PlayerColor color in colors)
@@ -42,18 +45,40 @@ namespace TeamJAMiN.Models.ComponentViewModels
             ulHtml += "</ul>";
             InfluenceMarkerHtml = ulHtml;
         }
-        public InfluenceSpaceViewModel(int index, int currentPlayerInfluence)
+        public InfluenceSpaceViewModel(int index, int currentPlayerInfluence, string userName, Game game)
         {
             Index = index;
-            DisplayIndex = index.ToString();
+            DisplayIndex = Location = index.ToString();
             MoneyHtml = StarHtml = KickedOutCssClass = InfluenceMarkerHtml = "";
             UseInfluenceAsMoney = UseInfluenceAsFame = false;
 
+            SetPropertiesByIndex(Index, currentPlayerInfluence);
+
+            SetState(game);
+            HasActionForm = FormHelper.HasActionForm(userName, game, State, Location, State != GameActionState.NoAction);
+        }
+
+        private void SetState(Game game)
+        {
+            State = GameActionState.NoAction;
+            var actions = TurnManager.GetNextActions(game.CurrentTurn);
+            if( actions != null )
+            {
+                var action = actions.First();
+                if (action.State == GameActionState.UseInfluenceAsMoney && UseInfluenceAsMoney)
+                    State = GameActionState.UseInfluenceAsMoney;
+                else if (action.State == GameActionState.UseInfluenceAsFame && UseInfluenceAsFame)
+                    State = GameActionState.UseInfluenceAsFame;
+            }
+        }
+
+        private void SetPropertiesByIndex(int index, int currentPlayerInfluence)
+        {
             if (GameInfluenceTrack.InfluenceToMoney.Contains(index))
             {
                 var money = Array.IndexOf(GameInfluenceTrack.InfluenceToMoney, index);
                 MoneyHtml = @"<div class=""influence-money-icon money-" + money + @"""></div>";
-                if(index < currentPlayerInfluence)
+                if (index < currentPlayerInfluence)
                     UseInfluenceAsMoney = true;
             }
             if (index % 5 == 0 && index != 35)
@@ -73,6 +98,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 KickedOutCssClass += "influence-icon";
             }
         }
+
         public int Index { get; private set; }
         public string DisplayIndex { get; private set; }
         public string MoneyHtml { get; private set; }
@@ -82,5 +108,9 @@ namespace TeamJAMiN.Models.ComponentViewModels
 
         public bool UseInfluenceAsMoney { get; private set; }
         public bool UseInfluenceAsFame { get; private set; }
+
+        public bool HasActionForm { get; private set; }
+        public GameActionState State { get; private set; }
+        public string Location { get; private set; }
     }
 }
