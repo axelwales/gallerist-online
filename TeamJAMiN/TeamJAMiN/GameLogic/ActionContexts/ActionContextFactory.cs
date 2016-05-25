@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.GameLogic.ActionContexts;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
@@ -26,8 +27,8 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             { GameActionState.ChooseLocation, typeof(SetupContext) },
             { GameActionState.GameStart, typeof(SetupContext) },
             { GameActionState.Pass, typeof(SetupContext) },
-            { GameActionState.UseInfluenceAsFame, typeof(SetupContext) },
-            { GameActionState.UseInfluenceAsMoney, typeof(SetupContext) },
+            { GameActionState.UseInfluenceAsFame, typeof(InfluenceTrackContext) },
+            { GameActionState.UseInfluenceAsMoney, typeof(InfluenceTrackContext) },
             { GameActionState.GetTicketVip, typeof(BonusContext) },
             { GameActionState.GetTicketInvestor, typeof(BonusContext) },
             { GameActionState.GetTicketCollector, typeof(BonusContext) },

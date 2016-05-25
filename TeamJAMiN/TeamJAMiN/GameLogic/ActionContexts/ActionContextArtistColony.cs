@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.GameLogic.ActionContexts;
 using TeamJAMiN.GameLogic.ComponentManagers;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers

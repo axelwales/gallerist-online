@@ -92,4 +92,43 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         }
 
     }
+
+    public abstract class NonLinearActionContext : ActionContext
+    {
+        protected NonLinearActionContext(Game game, Dictionary<GameActionState, Type> NameToState) : base(game, NameToState)
+        {
+
+        }
+
+        public bool IsParentState { get; private set; }
+        public ActionContext ParentContext { get; private set; }
+
+        protected override GameActionState GetState()
+        {
+            if (!IsParentState)
+                return base.GetState();
+            else
+                return ParentContext.State;
+        }
+
+        protected override void SetState(GameActionState state)
+        {
+            if (NameToState.ContainsKey(state))
+            {
+                IsParentState = false;
+                base.SetState(state);
+            }
+            else
+            {
+                IsParentState = true;
+                ParentContext = ActionContextFactory.GetContext(state, Game);
+            }
+        }
+
+        public override void DoAction(GameAction action)
+        {
+            if (!IsParentState)
+                base.DoAction(action);
+        }
+    }
 }
