@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
+using TeamJAMiN.Controllers.GameLogicHelpers;
 using TeamJAMiN.GalleristComponentEntities;
 
 namespace TeamJAMiN.Models.GameViewHelpers
@@ -16,17 +17,28 @@ namespace TeamJAMiN.Models.GameViewHelpers
             return game.CurrentPlayer.UserName == userName;
         }
 
-        public static void GetActionForm(this HtmlHelper Html, string partialViewPath, Game game, GameActionState state, string location, object model = null)
+        public static bool HasActionForm(string userName, Game game, GameActionState state, string location, bool otherConditions = true)
+        {
+            if(!otherConditions)
+            {
+                return false;
+            }
+            var isActive = IsActivePlayer(userName, game);
+            var isValidState = ActionManager.IsValidTransition(state, location, game, null, true);
+            return isActive && isValidState;
+        }
+
+        public static void GetActionForm(this HtmlHelper html, string partialViewPath, Game game, GameActionState state, string location, object model = null)
         {
             string partialView;
             if (model != null)
-                partialView = Html.Partial(partialViewPath,model).ToString();
+                partialView = html.Partial(partialViewPath,model).ToString();
             else
-                partialView = Html.Partial(partialViewPath).ToString();
-            using (Html.BeginForm("TakeGameAction", "Game", new { id = game.Id, gameAction = state, actionLocation = location }, FormMethod.Post, new { role = "form" }))
+                partialView = html.Partial(partialViewPath).ToString();
+            using (html.BeginForm("TakeGameAction", "Game", new { id = game.Id, gameAction = state, actionLocation = location }, FormMethod.Post, new { role = "form" }))
             {
-                string inner = Html.AntiForgeryToken().ToString() + InsertSubmitElement(partialView);
-                Html.ViewContext.Writer.Write(inner);
+                string inner = html.AntiForgeryToken().ToString() + InsertSubmitElement(partialView);
+                html.ViewContext.Writer.Write(inner);
             }
         }
 

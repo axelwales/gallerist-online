@@ -199,6 +199,7 @@
     <Compile Include="GameLogic\ActionContexts\ActionContextExecutive.cs" />
     <Compile Include="GameLogic\ActionContexts\ActionContextFactory.cs" />
     <Compile Include="GameLogic\ActionContexts\ActionContextGeneral.cs" />
+    <Compile Include="GameLogic\ActionContexts\ActionContextInfluenceTrack.cs" />
     <Compile Include="GameLogic\ActionContexts\ActionContextInternationalMarket.cs" />
     <Compile Include="GameLogic\ComponentManagers\ActionManager.cs" />
     <Compile Include="GameLogic\ActionContexts\ActionContextMediaCenter.cs" />
@@ -615,6 +616,7 @@
     <Content Include="Views\Game\PlayerBoard\ReputationTileLocation.cshtml" />
     <Content Include="Views\Game\TicketStacks\TicketStacks.cshtml" />
     <Content Include="Views\Account\RegistrationForm.cshtml" />
+    <Content Include="Views\Game\InfluenceTrack\InfluenceTrackSpace.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

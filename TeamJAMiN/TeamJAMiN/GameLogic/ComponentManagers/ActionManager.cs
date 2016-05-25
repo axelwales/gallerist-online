@@ -46,16 +46,26 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return action.IsValidAction(game);
         }
 
-        public static bool IsValidTransition(this GameAction action, Game game)
+        public static bool IsValidTransition(this GameAction action, Game game, bool getParent = false)
         {
+            if(getParent)
+            {
+                var actions = game.CurrentTurn.GetNextActions();
+                if( actions != null )
+                {
+                    var pendingAction = actions.FirstOrDefault(a => a.State == action.State);
+                    if ( pendingAction != null )
+                        action.Parent = pendingAction.Parent;
+                }
+            }
             var invoker = new ActionContextInvoker(game);
             return invoker.IsValidTransition(action);
         }
 
-        public static bool IsValidTransition(GameActionState state, string actionLocation, Game game, GameAction parent = null)
+        public static bool IsValidTransition(GameActionState state, string actionLocation, Game game, GameAction parent = null, bool getParent = false)
         {
             var action = new GameAction { State = state, Location = actionLocation, Parent = parent };
-            return action.IsValidTransition(game);
+            return action.IsValidTransition(game, getParent);
         }
 
         public static bool IsValidTicketBonus(GameActionState state, Game game, VisitorTicketType type, GameAction parent = null)
