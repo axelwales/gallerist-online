@@ -79,14 +79,21 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 var money = Array.IndexOf(GameInfluenceTrack.InfluenceToMoney, index);
                 MoneyHtml = @"<div class=""influence-money-icon money-" + money + @"""></div>";
                 if (index < currentPlayerInfluence)
+                {
                     UseInfluenceAsMoney = true;
+                    Location = GameInfluenceTrack.CalculateMoneySpentByInfluence(currentPlayerInfluence, index).ToString();
+                }
+
             }
             if (index % 5 == 0 && index != 35)
             {
                 StarHtml = @"<div class=""star-white influence-star-icon""></div>";
                 KickedOutCssClass = "has-star ";
                 if (index < currentPlayerInfluence)
+                {
                     UseInfluenceAsFame = true;
+                    Location = GameInfluenceTrack.CalculateFameGainedByInfluence(currentPlayerInfluence, index).ToString();
+                }
             }
             if (index % 5 == 0 && index != 0)
             {

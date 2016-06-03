@@ -27,8 +27,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static int GetMaxMoneyFromInfluence(this Player player)
         {
+            return GetMaxMoneyFromInfluence(player.Influence);
+        }
+
+        public static int GetMaxMoneyFromInfluence(int influence)
+        {
             int max = 0;
-            while (InfluenceToMoney[max] < player.Influence) { max++; }
+            while (InfluenceToMoney[max] < influence) { max++; }
             return max;
         }
 
@@ -52,10 +57,16 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static int GetMaxFameFromInfluence(this Player player)
         {
+            return GetMaxFameFromInfluence(player.Influence);
+        }
+
+        public static int GetMaxFameFromInfluence(int influence)
+        {
             int max = 0;
-            while (max*5 < player.Influence) { max++; }
+            while (max * 5 < influence) { max++; }
             return max;
         }
+
 
         public static void UseInfluenceAsFame(this Player player, int amount)
         {
@@ -64,6 +75,36 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 int max = player.GetMaxFameFromInfluence();
                 player.Influence = 5 * (max - amount);
             }
+        }
+
+        public static int CalculateFameGainedByInfluence(this Player player, int endInfluence)
+        {
+            return CalculateFameGainedByInfluence(player.Influence, endInfluence);
+        }
+
+        public static int CalculateFameGainedByInfluence(int playerInfluence, int space)
+        {
+            if (space % 5 != 0)
+            {
+                return 0;
+            }
+            return GetMaxFameFromInfluence(playerInfluence) - (space / 5);
+        }
+
+        public static int CalculateMoneySpentByInfluence(this Player player, int space)
+        {
+            return CalculateMoneySpentByInfluence(player.Influence, space);
+        }
+
+        public static int CalculateMoneySpentByInfluence(int startInfluence, int endInfluence)
+        {
+            if (!InfluenceToMoney.Contains(endInfluence))
+            {
+                return 0;
+            }
+            int amount = 0;
+            while (InfluenceToMoney[amount] != endInfluence) { amount++; }
+            return GetMaxMoneyFromInfluence(startInfluence) - InfluenceToMoney[amount];
         }
     }
 }
