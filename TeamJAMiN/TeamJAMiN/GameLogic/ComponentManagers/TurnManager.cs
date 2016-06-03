@@ -193,7 +193,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public static void SetupTurn(this Game game, GameTurn oldTurn)
         {
             game.SetNextPlayer();
-            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, CurrentPlayer = game.CurrentPlayer };
+            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, NextActionId = 0, CurrentPlayer = game.CurrentPlayer };
             game.Turns.Add(newTurn);
             newTurn.StartTurn();
         }

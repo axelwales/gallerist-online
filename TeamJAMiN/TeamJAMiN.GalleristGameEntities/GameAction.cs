@@ -4,6 +4,8 @@ namespace TeamJAMiN.GalleristComponentEntities
 {
     public class GameAction
     {
+        public int Id { get; set; }
+
         public int? ParentId { get; set; }
         [JsonIgnore]
         GameAction _parent { get; set; }
@@ -18,7 +20,7 @@ namespace TeamJAMiN.GalleristComponentEntities
             {
                 _parent = value;
                 if(value != null)
-                    ParentId = value.Order;
+                    ParentId = value.Id;
             }
         }
 

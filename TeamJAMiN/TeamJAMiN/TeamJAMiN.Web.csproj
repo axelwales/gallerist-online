@@ -193,6 +193,10 @@
     <Compile Include="DataContexts\GalleristComponentMigrations\201604231413225_executiveactions.Designer.cs">
       <DependentUpon>201604231413225_executiveactions.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataContexts\GalleristComponentMigrations\201606030016174_GameActionIds.cs" />
+    <Compile Include="DataContexts\GalleristComponentMigrations\201606030016174_GameActionIds.Designer.cs">
+      <DependentUpon>201606030016174_GameActionIds.cs</DependentUpon>
+    </Compile>
     <Compile Include="GameLogic\ActionContexts\ActionContext.cs" />
     <Compile Include="GameLogic\ActionContexts\ActionContextArtistColony.cs" />
     <Compile Include="GameLogic\ActionContexts\ActionContextBonus.cs" />
@@ -725,6 +729,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataContexts\GalleristComponentMigrations\201604231413225_executiveactions.resx">
       <DependentUpon>201604231413225_executiveactions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataContexts\GalleristComponentMigrations\201606030016174_GameActionIds.resx">
+      <DependentUpon>201606030016174_GameActionIds.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataContexts\IdentityMigrations\201602282353509_init.resx">
       <DependentUpon>201602282353509_init.cs</DependentUpon>

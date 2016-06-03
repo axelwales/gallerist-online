@@ -20,6 +20,8 @@ namespace TeamJAMiN.GalleristComponentEntities
         public string CompletedActionData { get; set; }
         public string PendingActionData { get; set; }
 
+        public int NextActionId { get; set; }
+
         [NotMapped]
         public int CurrentActionOrderNumber
         {
@@ -31,6 +33,7 @@ namespace TeamJAMiN.GalleristComponentEntities
 
         [NotMapped]
         GameAction _currentAction { get; set; }
+
         [NotMapped]
         public GameAction CurrentAction
         {
@@ -50,6 +53,7 @@ namespace TeamJAMiN.GalleristComponentEntities
 
         [NotMapped]
         List<GameAction> _pendingActions { get; set; }
+
         [NotMapped]
         public List<GameAction> PendingActions
         {
@@ -66,11 +70,7 @@ namespace TeamJAMiN.GalleristComponentEntities
                         _pendingActions = JsonConvert.DeserializeObject<List<GameAction>>(PendingActionData);
                         foreach(GameAction action in _pendingActions)
                         {
-                            action.Turn = this;
-                            if(action.ParentId != null)
-                            {
-                                 action.Parent = CompletedActions.FirstOrDefault(a => a.Order == action.ParentId);
-                            }
+                            SetReferenceVariables(action);
                         }
                     }
                 }
@@ -85,6 +85,7 @@ namespace TeamJAMiN.GalleristComponentEntities
 
         [NotMapped]
         List<GameAction> _completedActions { get; set; }
+
         [NotMapped]
         public List<GameAction> CompletedActions
         {
@@ -101,11 +102,7 @@ namespace TeamJAMiN.GalleristComponentEntities
                         _completedActions = JsonConvert.DeserializeObject<List<GameAction>>(CompletedActionData);
                         foreach (GameAction action in _completedActions)
                         {
-                            action.Turn = this;
-                            if (action.ParentId != null)
-                            {
-                                action.Parent = CompletedActions.FirstOrDefault(a => a.Order == action.ParentId);
-                            }
+                            SetReferenceVariables(action);
                         }
                     }
                 }
@@ -118,5 +115,13 @@ namespace TeamJAMiN.GalleristComponentEntities
             }
         }
 
+        private void SetReferenceVariables(GameAction action)
+        {
+            action.Turn = this;
+            if (action.ParentId != null)
+            {
+                action.Parent = CompletedActions.FirstOrDefault(a => a.Id == action.ParentId);
+            }
+        }
     }
 }
