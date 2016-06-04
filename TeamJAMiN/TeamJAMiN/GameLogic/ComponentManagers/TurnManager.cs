@@ -60,16 +60,16 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         private static void AddPendingOrderHelper(GameTurn turn, GameAction newAction, PendingPosition position)
         {
+            if ( turn.PendingActions.Count == 0 )
+                newAction.Order = turn.CurrentActionOrderNumber + 1;
+            var indexes = turn.PendingActions.Select(a => a.Order);
             if (position == PendingPosition.first)
             {
-                newAction.Order = turn.CurrentActionOrderNumber + 1;
+                newAction.Order = indexes.OrderBy(o => o).FirstOrDefault();
             }
             else
             {
-                if (turn.PendingActions.Count > 0)
-                    newAction.Order = turn.PendingActions.Select(a => a.Order).OrderByDescending(o => o).FirstOrDefault() + 1;
-                else
-                    newAction.Order = turn.CurrentActionOrderNumber + 1;
+                newAction.Order = indexes.OrderByDescending(o => o).FirstOrDefault() + 1;
             }
         }
         private static void IncrementPendingActionOrder(this List<GameAction> pendingList, PendingPosition position)
