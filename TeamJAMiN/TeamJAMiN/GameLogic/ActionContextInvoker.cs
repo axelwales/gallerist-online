@@ -31,6 +31,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
             DoActionSingle(newAction);
 
+            //todo make sure this executes all executable actions, not just the first.
             var nextActions = Game.CurrentTurn.GetNextActions();
             if (nextActions.Count == 1)
             {
@@ -46,7 +47,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public void DoActionSingle(GameAction action)
         {
-            Game.CurrentTurn.SetCurrentAction(action.State, action.Location);
+            Game.CurrentTurn.SetCurrentAction(action);
             if (!_context.NameToState.ContainsKey(action.State))
             {
                 _context = ActionContextFactory.GetContext(action.State, Game);

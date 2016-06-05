@@ -11,11 +11,17 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     {
         public static void SetCurrentAction(this GameTurn turn, GameActionState state, string location)
         {
+            var action = new GameAction { State = state, Location = location, IsExecutable = true };
+            SetCurrentAction(turn, action);
+        }
+
+        public static void SetCurrentAction(this GameTurn turn, GameAction action)
+        {
             if (turn.CurrentAction != null)
             {
                 turn.AddCompletedAction(turn.CurrentAction);
             }
-            turn.CurrentAction = new GameAction { State = state, Location = location, IsExecutable = true };
+            turn.CurrentAction = action;
         }
 
         public static void AddPendingAction(this GameTurn turn, GameAction action)
@@ -145,6 +151,18 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 return orderedActions.Where(a => a.Order == next).ToList();
             }
             return null;
+        }
+
+        public static void SetParentPendingAction(GameAction action, GameTurn turn)
+        {
+            if (turn != null && turn.PendingActions != null)
+            {
+                var pendingAction = turn.PendingActions.FirstOrDefault(a => a.State == action.State);
+                if(pendingAction != null)
+                {
+                    action.Parent = pendingAction.Parent;
+                }
+            }
         }
 
         public static void AddCompletedAction(this GameTurn turn, GameAction action)

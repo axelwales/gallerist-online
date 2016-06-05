@@ -50,13 +50,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             if(getParent)
             {
-                var actions = game.CurrentTurn.GetNextActions();
-                if( actions != null )
-                {
-                    var pendingAction = actions.FirstOrDefault(a => a.State == action.State);
-                    if ( pendingAction != null )
-                        action.Parent = pendingAction.Parent;
-                }
+                TurnManager.SetParentPendingAction(action, game.CurrentTurn);
             }
             var invoker = new ActionContextInvoker(game);
             return invoker.IsValidTransition(action);
