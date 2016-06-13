@@ -50,40 +50,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentsTurn\ActionList.cs" />
+    <Compile Include="ComponentsTurn\CompletedActionList.cs" />
+    <Compile Include="ComponentsTurn\PendingActionList.cs" />
+    <Compile Include="DataList.cs" />
     <Compile Include="Dtos\GameActionDto.cs" />
     <Compile Include="Dtos\GameDto.cs" />
-    <Compile Include="GameActionStatus.cs" />
-    <Compile Include="GameTurn.cs" />
-    <Compile Include="GameAction.cs" />
-    <Compile Include="GameActionState.cs" />
-    <Compile Include="GameArt.cs" />
-    <Compile Include="GameArtLocation.cs" />
-    <Compile Include="GameContractLocation.cs" />
-    <Compile Include="GameReputationTile.cs" />
-    <Compile Include="GameVisitor.cs" />
-    <Compile Include="GameVisitorLocation.cs" />
+    <Compile Include="ComponentsTurn\GameActionStatus.cs" />
+    <Compile Include="ComponentsTurn\GameTurn.cs" />
+    <Compile Include="ComponentsTurn\GameAction.cs" />
+    <Compile Include="ComponentsTurn\GameActionState.cs" />
+    <Compile Include="ComponentsArt\GameArt.cs" />
+    <Compile Include="ComponentsArt\GameArtLocation.cs" />
+    <Compile Include="ComponentsContracts\GameContractLocation.cs" />
+    <Compile Include="ComponentsReputation\GameReputationTile.cs" />
+    <Compile Include="ComponentsVisitors\GameVisitor.cs" />
+    <Compile Include="ComponentsVisitors\GameVisitorLocation.cs" />
     <Compile Include="Managers\EmailManager.cs" />
     <Compile Include="Partial\Game.cs" />
-    <Compile Include="PlayerAssistant.cs" />
-    <Compile Include="GameReputationTileLocation.cs" />
-    <Compile Include="PlayerAssistantLocation.cs" />
-    <Compile Include="PlayerColor.cs" />
-    <Compile Include="PlayerLocation.cs" />
-    <Compile Include="TemplateArt.cs" />
-    <Compile Include="GameArtist.cs" />
-    <Compile Include="TemplateArtist.cs" />
-    <Compile Include="ArtType.cs" />
+    <Compile Include="ComponentsPlayer\PlayerAssistant.cs" />
+    <Compile Include="ComponentsReputation\GameReputationTileLocation.cs" />
+    <Compile Include="ComponentsPlayer\PlayerAssistantLocation.cs" />
+    <Compile Include="ComponentsPlayer\PlayerColor.cs" />
+    <Compile Include="ComponentsPlayer\PlayerLocation.cs" />
+    <Compile Include="ComponentTemplates\TemplateArt.cs" />
+    <Compile Include="ComponentsArt\GameArtist.cs" />
+    <Compile Include="ComponentTemplates\TemplateArtist.cs" />
+    <Compile Include="ComponentsArt\ArtType.cs" />
     <Compile Include="BonusType.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="GameContract.cs" />
-    <Compile Include="TemplateContract.cs" />
+    <Compile Include="ComponentsPlayer\Player.cs" />
+    <Compile Include="ComponentsContracts\GameContract.cs" />
+    <Compile Include="ComponentTemplates\TemplateContract.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TemplateGame.cs" />
-    <Compile Include="TemplateReputationTile.cs" />
-    <Compile Include="ReputationTileScoring.cs" />
-    <Compile Include="GameTurnType.cs" />
-    <Compile Include="VisitorTicketType.cs" />
+    <Compile Include="ComponentTemplates\TemplateGame.cs" />
+    <Compile Include="ComponentTemplates\TemplateReputationTile.cs" />
+    <Compile Include="ComponentsReputation\ReputationTileScoring.cs" />
+    <Compile Include="ComponentsTurn\GameTurnType.cs" />
+    <Compile Include="ComponentsVisitors\VisitorTicketType.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -91,6 +95,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

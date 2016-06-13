@@ -7,6 +7,7 @@ namespace TeamJAMiN.GalleristComponentEntities
         public int Id { get; set; }
 
         public int? ParentId { get; set; }
+
         [JsonIgnore]
         GameAction _parent { get; set; }
         [JsonIgnore]
@@ -25,6 +26,7 @@ namespace TeamJAMiN.GalleristComponentEntities
         }
 
         public int? TurnId { get; set; }
+
         [JsonIgnore]
         GameTurn _turn { get; set; }
         [JsonIgnore]
