@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using TeamJAMiN.Controllers.GameControllerHelpers;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.GameLogic;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
@@ -19,9 +20,9 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             _context = ActionContextFactory.GetContext(game.CurrentTurn.CurrentAction.State, game);
         }
 
-        public bool DoAction(GameActionState state, string actionLocation = "")
+        public bool DoAction(ActionRequest request)
         {
-            var newAction = new GameAction { State = state, Location = actionLocation, IsExecutable = true };
+            var newAction = Game.CurrentTurn.GetPendingAction(request);
             if (!IsValidTransition(newAction))
             {
                 return false;

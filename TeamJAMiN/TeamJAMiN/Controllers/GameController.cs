@@ -325,7 +325,7 @@ namespace TeamJAMiN.Controllers
 
                     var actionInvoker = new ActionContextInvoker(game);
                     
-		            if(!actionInvoker.DoAction(gameAction, actionLocation))
+		            if(!actionInvoker.DoAction(new GameLogic.ActionRequest { State = gameAction, ActionLocation = actionLocation }))
 		            {
 			            return Redirect("~/Game/Play/" + id);
 		            }
