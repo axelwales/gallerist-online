@@ -7,35 +7,34 @@ using System.Threading.Tasks;
 
 namespace TeamJAMiN.GalleristComponentEntities.ComponentsTurn
 {
-    public abstract class ActionList<TList,TNode> : DataList<TList,TNode> where TList : new()
+    public abstract class ActionList<TList,TNode> : DataList<TList,TNode, GameTurn> where TList : ICollection<TNode>, new()
     {
-        protected GameTurn Turn { get; set; }
-
         public int Count { get { return GetCount(); } }
 
         protected abstract int GetCount();
 
-
         public ActionList(GameTurn turn, string actionData)
         {
-            Turn = turn;
+            Subject = turn;
             Data = actionData;
-            AttachList();
         }
 
         public ActionList(GameTurn turn, TList actionList)
         {
-            Turn = turn;
+            Subject = turn;
             List = actionList;
-            AttachList();
         }
 
         public ActionList(GameTurn turn)
         {
-            Turn = turn;
+            Subject = turn;
             Data = null;
             List = default(TList);
-            AttachList();
+        }
+
+        public ActionList()
+        {
+
         }
     }
 }

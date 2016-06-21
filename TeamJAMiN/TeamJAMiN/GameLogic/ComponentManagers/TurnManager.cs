@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using TeamJAMiN.Controllers.GameControllerHelpers;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.GameLogic;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
@@ -32,11 +33,8 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public static void AddPendingAction(this GameTurn turn, GameAction action, PendingPosition position)
         {
             action.Turn = turn;
-            var temp = turn.PendingActions;
-            AddPendingOrderHelper(turn, action, position);
-            temp.IncrementPendingActionOrder(position);
-            temp.Add(action);
-            turn.PendingActions = temp;
+            var toAdd = new List<GameAction> { action };
+            AddPendingHelper(turn, toAdd, position);
         }
 
         public static void AddPendingActions(this GameTurn turn, List<GameActionState> actions, GameActionStatus status, bool isExecutable)
@@ -51,106 +49,84 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static void AddPendingActions(this GameTurn turn, List<GameActionState> actions, GameAction parent, GameActionStatus status, PendingPosition position, bool isExecutable)
         {
-            var temp = turn.PendingActions;
             var newActions = new List<GameAction>();
             foreach (GameActionState state in actions)
             {
                 var action = new GameAction { State = state, Status = status, IsExecutable = isExecutable, Parent = parent, Turn = turn };
-                AddPendingOrderHelper(turn, action, position);
                 newActions.Add(action);
             }
-            temp.IncrementPendingActionOrder(position);
-            temp.AddRange(newActions);
-            turn.PendingActions = temp;
+            AddPendingHelper(turn, newActions, position);
         }
 
-        private static void AddPendingOrderHelper(GameTurn turn, GameAction newAction, PendingPosition position)
+        private static void AddPendingHelper(GameTurn turn, List<GameAction> newActions, PendingPosition position)
         {
-            if ( turn.PendingActions.Count == 0 )
-                newAction.Order = turn.CurrentActionOrderNumber + 1;
-            var indexes = turn.PendingActions.Select(a => a.Order);
             if (position == PendingPosition.first)
             {
-                newAction.Order = indexes.OrderBy(o => o).FirstOrDefault();
+                turn.PendingActions.Add(newActions);
             }
             else
             {
-                newAction.Order = indexes.OrderByDescending(o => o).FirstOrDefault() + 1;
-            }
-        }
-        private static void IncrementPendingActionOrder(this List<GameAction> pendingList, PendingPosition position)
-        {
-            if (position == PendingPosition.first)
-            {
-                foreach (GameAction oldAction in pendingList)
-                {
-                    oldAction.Order += 1;
-                }
+                turn.PendingActions.AddLast(newActions);
             }
         }
 
         public static void RemovePendingAction(this GameTurn turn, GameAction action)
         {
-            var temp = turn.PendingActions;
-            temp.Remove(action);
-            turn.PendingActions = temp;
+            turn.PendingActions.Remove(action);
         }
 
         public static void RemovePendingAction(this GameTurn turn, GameActionState state)
         {
-            var temp = turn.PendingActions;
-            var action = temp.FirstOrDefault(a => a.State == state);
+            var action = turn.PendingActions.FirstOrDefault(a => a.State == state);
             if( action != null)
             {
-                temp.Remove(action);
+                RemovePendingAction(turn, action);
             }
-            turn.PendingActions = temp;
         }
 
         public static void RemoveAllSiblingActions(this GameTurn turn, GameActionState state)
         {
-            var temp = turn.PendingActions;
-            var action = temp.FirstOrDefault(a => a.State == state);
-            if (action != null)
-            {
-                if (action.Status == GameActionStatus.OptionalExclusive)
-                {
-                    temp.RemoveAll(a => a.Status == GameActionStatus.OptionalExclusive && a.Order == action.Order);
-                }
-                else
-                {
-                    temp.Remove(action);
-                }
-            }
-            turn.PendingActions = temp;
+            var pending = turn.PendingActions;
+            var action = pending.FirstOrDefault(a => a.State == state);
+            turn.RemoveAllSiblingActions(action);
         }
 
         public static void RemoveAllSiblingActions(this GameTurn turn, GameAction action)
         {
-            var temp = turn.PendingActions;
+            var pending = turn.PendingActions;
             if (action != null)
             {
                 if (action.Status == GameActionStatus.OptionalExclusive)
                 {
-                    temp.RemoveAll(a => a.Status == GameActionStatus.OptionalExclusive && a.Order == action.Order);
+                    var toRemove = pending.FirstOrDefaultList(a => a.State == action.State);
+                    if(toRemove != null)
+                        pending.Remove(toRemove);
                 }
                 else
                 {
-                    temp.Remove(action);
+                    pending.Remove(action);
                 }
             }
-            turn.PendingActions = temp;
         }
 
         public static List<GameAction> GetNextActions(this GameTurn turn)
         {
             if (turn.PendingActions.Count > 0)
             {
-                var orderedActions = turn.PendingActions.OrderBy(a => a.Order);
-                int next = orderedActions.First().Order;
-                return orderedActions.Where(a => a.Order == next).ToList();
+                return turn.PendingActions.First;
             }
             return null;
+        }
+
+        public static GameAction GetPendingAction(this GameTurn turn, ActionRequest request)
+        {
+            var action = turn.PendingActions.FirstOrDefault(a => a.State == request.State);
+            if(action == null)
+            {
+                return new GameAction { State = request.State, Location = request.ActionLocation };
+            }
+            action.Location = request.ActionLocation;
+            return action;
         }
 
         public static void SetParentPendingAction(GameAction action, GameTurn turn)
@@ -170,10 +146,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if(action.IsComplete == false)
             {
                 action.IsComplete = true;
-                action.Order = turn.CompletedActions.Count;
-                var temp = turn.CompletedActions;
-                temp.Add(action);
-                turn.CompletedActions = temp;
+                turn.CompletedActions.Add(action);
             }
         }
 
@@ -211,7 +184,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public static void SetupTurn(this Game game, GameTurn oldTurn)
         {
             game.SetNextPlayer();
-            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, NextActionId = 0, CurrentPlayer = game.CurrentPlayer };
+            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, CurrentPlayer = game.CurrentPlayer };
             game.Turns.Add(newTurn);
             newTurn.StartTurn();
         }

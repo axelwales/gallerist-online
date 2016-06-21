@@ -9,6 +9,9 @@ namespace TeamJAMiN.GalleristComponentEntities.ComponentsTurn
 {
     public class PendingActionList : ActionList<LinkedList<List<GameAction>>,List<GameAction>>
     {
+        int _nextActionId = 0;
+        public int NextActionId { get { return _nextActionId; } set { _nextActionId = value; } }
+
         protected override int GetCount()
         {
             return List.Count;
@@ -19,41 +22,18 @@ namespace TeamJAMiN.GalleristComponentEntities.ComponentsTurn
             return List.First.Value;
         }
 
-        protected override LinkedList<List<GameAction>> GetActionList()
+        protected override void SetNavigationProperties(LinkedList<List<GameAction>> list)
         {
-            _list = base.GetActionList();
-            if (_list.Any())
+            foreach (List<GameAction> actionList in list)
             {
-                foreach (List<GameAction> actionList in _list)
+                foreach (GameAction action in actionList)
                 {
-                    foreach (GameAction action in actionList)
-                        SetReferenceVariables(action);
+                    action.Turn = Subject;
+                    if (Subject != null)
+                    {
+                        action.Parent = Subject.GetActionById(action.ParentId);
+                    }
                 }
-            }
-            return _list;
-        }
-
-        private void SetReferenceVariables(GameAction action)
-        {
-            action.Turn = Turn;
-            if (action.ParentId != null && Turn != null)
-            {
-                action.Parent = Turn.GetActionById(action.ParentId);
-            }
-        }
-
-        protected override void UpdateData()
-        {
-            base.UpdateData();
-            if (Turn != null)
-                Turn.UpdatePendingList(this);
-        }
-
-        protected override void AttachList()
-        {
-            if (Turn != null)
-            {
-                Turn.AddPendingList(this);
             }
         }
 
@@ -73,16 +53,62 @@ namespace TeamJAMiN.GalleristComponentEntities.ComponentsTurn
 
         public override void Add(List<GameAction> newNode)
         {
-            List.AddFirst(newNode);
-            UpdateData();
+            foreach(GameAction action in newNode)
+                action.Id = NextActionId++;
+            base.Add(newNode);
         }
 
-        public void Remove(List<GameAction> value)
+        public void AddLast(GameAction action)
         {
-            List.Remove(value);
+            var newNode = new List<GameAction> { action };
+            AddLast(newNode);
+        }
+
+        public void AddLast(List<GameAction> newNode)
+        {
+            foreach (var action in newNode)
+                action.Id = NextActionId++;
+            List.AddLast(newNode);
             UpdateData();
         }
 
+        public void Remove(GameAction action)
+        {
+            var node = FirstOrDefaultList(a => a.State == action.State);
+            if (node != null)
+            {
+                node.Remove(action);
+                if (node.Count == 0)
+                    Remove(node);
+                UpdateData();
+            }
+        }
+
+        public GameAction FirstOrDefault(Func<GameAction, bool> predicate)
+        {
+            GameAction result = null;
+            var list = FirstOrDefaultList(predicate);
+            if (list != null)
+                result = list.First(predicate);
+            return result;
+        }
+
+        public List<GameAction> FirstOrDefaultList(Func<GameAction, bool> predicate)
+        {
+            List<GameAction> result = null;
+            foreach (var sublist in List)
+            {
+                var action = sublist.FirstOrDefault(predicate);
+                if (action != null)
+                {
+                    result = sublist;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        public PendingActionList() : base() { }
         public PendingActionList(GameTurn turn) : base(turn) { }
         public PendingActionList(GameTurn turn, string actionData) : base(turn, actionData) { }
         public PendingActionList(GameTurn turn, LinkedList<List<GameAction>> actionList) : base(turn, actionList) { }

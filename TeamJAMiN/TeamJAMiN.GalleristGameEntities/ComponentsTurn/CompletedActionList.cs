@@ -25,27 +25,19 @@ namespace TeamJAMiN.GalleristComponentEntities.ComponentsTurn
             return List.Count;
         }
 
-        public override void Add(GameAction action)
+        protected override void SetNavigationProperties(List<GameAction> list)
         {
-            List.Add(action);
-            UpdateData();
-        }
-
-        protected override void UpdateData()
-        {
-            base.UpdateData();
-            if (Turn != null)
-                Turn.UpdateCompletedList(this);
-        }
-
-        protected override void AttachList()
-        {
-            if (Turn != null)
+            foreach (GameAction action in list)
             {
-                Turn.AddCompletedList(this);
+                action.Turn = Subject;
+                if (Subject != null)
+                {
+                    action.Parent = Subject.GetActionById(action.ParentId);
+                }
             }
         }
 
+        public CompletedActionList() : base() { }
         public CompletedActionList(GameTurn turn) : base(turn) { }
         public CompletedActionList(GameTurn turn, string actionData) : base(turn, actionData) { }
         public CompletedActionList(GameTurn turn, List<GameAction> actionList) : base(turn, actionList) { }

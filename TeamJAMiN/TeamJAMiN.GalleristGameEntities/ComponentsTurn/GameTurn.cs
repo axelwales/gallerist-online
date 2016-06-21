@@ -18,11 +18,6 @@ namespace TeamJAMiN.GalleristComponentEntities
         public Player CurrentPlayer { get; set; }
         public Player KickedOutPlayer { get; set; }
 
-        public string CompletedActionData { get; set; }
-        public string PendingActionData { get; set; }
-
-        public int NextPendingActionId { get; set; }
-
         [NotMapped]
         GameAction _currentAction { get; set; }
 
@@ -46,18 +41,20 @@ namespace TeamJAMiN.GalleristComponentEntities
         [NotMapped]
         PendingActionList _pendingActions;
 
-        [NotMapped]
         public PendingActionList PendingActions
         {
             get
             {
                 if(_pendingActions == null)
-                    _pendingActions = new PendingActionList(this, PendingActionData);
+                    _pendingActions = new PendingActionList(this);
+                if (_pendingActions.Subject == null)
+                {
+                    _pendingActions.Subject = this;
+                }
                 return _pendingActions;
             }
             set
             {
-                PendingActionData = value.Data;
                 _pendingActions = value;
             }
         }
@@ -65,46 +62,34 @@ namespace TeamJAMiN.GalleristComponentEntities
         [NotMapped]
         CompletedActionList _completedActions { get; set; }
 
-        [NotMapped]
         public CompletedActionList CompletedActions
         {
             get
             {
                 if (_completedActions == null)
-                    _completedActions = new CompletedActionList(this, CompletedActionData);
+                    _completedActions = new CompletedActionList(this);
+                if (_completedActions.Subject == null)
+                {
+                    _completedActions.Subject = this;
+                }
                 return _completedActions;
             }
             set
             {
-                CompletedActionData = value.Data;
                 _completedActions = value;
             }
         }
 
         public GameAction GetActionById(int? id)
         {
-            if (id != null) ;
-            return null;
-        }
-
-        internal void AddPendingList(PendingActionList actionList)
-        {
-            UpdatePendingList(actionList);
-        }
-
-        public void UpdatePendingList(PendingActionList actionList)
-        {
-            PendingActionData = actionList.Data;
-        }
-
-        internal void AddCompletedList(CompletedActionList actionList)
-        {
-            UpdateCompletedList(actionList);
-        }
-
-        public void UpdateCompletedList(CompletedActionList actionList)
-        {
-            CompletedActionData = actionList.Data;
+            GameAction action = null;
+            if (id != null)
+            {
+                action = CompletedActions.FirstOrDefault(a => a.Id == id);
+                if (action == null)
+                    action = PendingActions.FirstOrDefault(a => a.Id == id);
+            }
+            return action;
         }
     }
 }

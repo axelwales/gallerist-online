@@ -10,46 +10,68 @@ using System.Threading.Tasks;
 namespace TeamJAMiN.GalleristComponentEntities
 {
     [ComplexType]
-    public abstract class DataList<TList,TNode> where TList : new()
+    public abstract class DataList<TList,TNode, TSubject> where TList : ICollection<TNode>, new()
     {
         public string Data { get; set; }
-        
-        protected TList _list;
-        protected TList List { get { return GetActionList(); } set { SetActionList(value); } }
 
+        [NotMapped]
+        public TSubject Subject { get; set; }
+
+        [NotMapped]
+        protected TList _list;
+
+        [NotMapped]
+        protected TList List { get { return GetDataList(); } set { SetDataList(value); } }
+
+        [NotMapped]
         public TNode First { get { return GetFirst(); } }
 
         protected abstract TNode GetFirst();
 
-        protected virtual void SetActionList(TList value)
+        protected virtual void SetDataList(TList value)
         {
             Data = JsonConvert.SerializeObject(value);
             _list = value;
         }
 
-        protected virtual TList GetActionList()
+        protected virtual TList GetDataList()
         {
             if (_list == null)
             {
-                if (Data == null)
+                _list = JsonConvert.DeserializeObject<TList>(Data);
+                if (_list == null)
                 {
                     _list = new TList();
                 }
-                else
-                {
-                    _list = JsonConvert.DeserializeObject<TList>(Data);
-                }
+                SetNavigationProperties(_list);
             }
             return _list;
         }
 
-        public abstract void Add(TNode node);
+        protected virtual void SetNavigationProperties(TList list)
+        {
+        }
+
+        public virtual void Add(TNode node)
+        {
+            List.Add(node);
+            UpdateData();
+        }
+
+        public virtual void Remove(TNode value)
+        {
+            List.Remove(value);
+            UpdateData();
+        }
+
+        public virtual TNode FirstOrDefault(Func<TNode,bool> predicate)
+        {
+            return List.FirstOrDefault(predicate);
+        }
 
         protected virtual void UpdateData()
         {
             Data = JsonConvert.SerializeObject(List);
         }
-
-        protected abstract void AttachList();
     }
 }

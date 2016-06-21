@@ -88,10 +88,5 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             }
             return IsValidTicketBonus(state, game, type, parent);
         }
-
-        public static void SetActionId(this GameTurn turn, GameAction action)
-        {
-            action.Id = turn.NextActionId++;
-        }
     }
 }
