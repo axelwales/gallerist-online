@@ -55,7 +55,8 @@ namespace TeamJAMiN.GalleristComponentEntities.ComponentsTurn
         {
             foreach(GameAction action in newNode)
                 action.Id = NextActionId++;
-            base.Add(newNode);
+            List.AddFirst(newNode);
+            UpdateData();
         }
 
         public void AddLast(GameAction action)
