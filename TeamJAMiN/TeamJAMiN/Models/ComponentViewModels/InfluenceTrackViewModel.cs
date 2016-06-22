@@ -54,11 +54,11 @@ namespace TeamJAMiN.Models.ComponentViewModels
 
             SetPropertiesByIndex(Index, currentPlayerInfluence);
 
-            SetState(game);
+            SetStateAndLocation(Index, currentPlayerInfluence, game);
             HasActionForm = FormHelper.HasActionForm(userName, game, State, Location, State != GameActionState.NoAction);
         }
 
-        private void SetState(Game game)
+        private void SetStateAndLocation(int index, int currentPlayerInfluence, Game game)
         {
             State = GameActionState.NoAction;
             var actions = TurnManager.GetNextActions(game.CurrentTurn);
@@ -66,9 +66,16 @@ namespace TeamJAMiN.Models.ComponentViewModels
             {
                 var action = actions.First();
                 if (action.State == GameActionState.UseInfluenceAsMoney && UseInfluenceAsMoney)
+                {
                     State = GameActionState.UseInfluenceAsMoney;
+                    Location = GameInfluenceTrack.CalculateMoneySpentByInfluence(currentPlayerInfluence, index).ToString();
+                }
                 else if (action.State == GameActionState.UseInfluenceAsFame && UseInfluenceAsFame)
+                {
                     State = GameActionState.UseInfluenceAsFame;
+                    Location = GameInfluenceTrack.CalculateFameGainedByInfluence(currentPlayerInfluence, index).ToString();
+                }
+
             }
         }
 
@@ -81,7 +88,6 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 if (index < currentPlayerInfluence)
                 {
                     UseInfluenceAsMoney = true;
-                    Location = GameInfluenceTrack.CalculateMoneySpentByInfluence(currentPlayerInfluence, index).ToString();
                 }
 
             }
@@ -92,7 +98,6 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 if (index < currentPlayerInfluence)
                 {
                     UseInfluenceAsFame = true;
-                    Location = GameInfluenceTrack.CalculateFameGainedByInfluence(currentPlayerInfluence, index).ToString();
                 }
             }
             if (index % 5 == 0 && index != 0)

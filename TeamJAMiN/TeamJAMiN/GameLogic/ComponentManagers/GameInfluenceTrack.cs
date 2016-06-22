@@ -104,7 +104,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             }
             int amount = 0;
             while (InfluenceToMoney[amount] != endInfluence) { amount++; }
-            return GetMaxMoneyFromInfluence(startInfluence) - InfluenceToMoney[amount];
+            return GetMaxMoneyFromInfluence(startInfluence) - amount;
         }
     }
 }
