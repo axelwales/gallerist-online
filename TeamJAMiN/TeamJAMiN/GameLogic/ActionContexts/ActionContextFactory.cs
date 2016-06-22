@@ -54,5 +54,11 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return (ActionContext)Activator.CreateInstance(contextType, game);
         }
 
+        public static ActionContext GetContext(GameAction action, Game game)
+        {
+            Type contextType = ActionToContextType[action.State];
+            return (ActionContext)Activator.CreateInstance(contextType, game, action);
+        }
+
     }
 }

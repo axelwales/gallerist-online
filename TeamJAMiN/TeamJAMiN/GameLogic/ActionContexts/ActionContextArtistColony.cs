@@ -10,15 +10,17 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public class ArtistColonyContext : ActionContext, IMoneyTransactionContext
     {
-        public ArtistColonyContext(Game game)
-            : base(game, new Dictionary<GameActionState, Type> {
+        private static Dictionary<GameActionState, Type> _nameToState =
+            new Dictionary<GameActionState, Type> {
                 { GameActionState.ChooseLocation, typeof(ChooseLocation) },
                 { GameActionState.ArtistColony, typeof(ArtistColony) },
                 { GameActionState.ArtistDiscover, typeof(ArtistDiscover) },
                 { GameActionState.ArtBuy, typeof(ArtBuy) },
                 { GameActionState.Pass, typeof(Pass) }
-            })
-        { }
+            };
+
+        public ArtistColonyContext(Game game) : base(game, _nameToState) { }
+        public ArtistColonyContext(Game game, GameAction action) : base(game, action, _nameToState) { }
 
         public int GetCost()
         {
@@ -80,6 +82,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if (context.Game.CurrentPlayer.Commission == artist)
                 context.Game.CurrentPlayer.Commission = null;
         }
+
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
             var game = context.Game;

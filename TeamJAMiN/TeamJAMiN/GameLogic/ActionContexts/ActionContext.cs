@@ -43,6 +43,14 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             State = Game.CurrentTurn.CurrentAction.State;
         }
 
+        protected ActionContext(Game game, GameAction action, Dictionary<GameActionState, Type> NameToState)
+        {
+            Game = game;
+            Action = action;
+            this.NameToState = NameToState;
+            State = action.State;
+        }
+
         public bool IsValidGameState(GameAction action)
         {
             State = action.State;

@@ -33,10 +33,9 @@ namespace TeamJAMiN.GameLogic.ActionContexts
 
     public class UseInfluenceAsMoney : ActionState
     {
-        public override void DoAction<InternationalMarketContext>(InternationalMarketContext context)
+        public override void DoAction<ActionContext>(ActionContext context)
         {
-            var parentState = context.Action.Parent.State;
-            var parentContext = (IMoneyTransactionContext)ActionContextFactory.GetContext(parentState, context.Game);
+            var parentContext = (IMoneyTransactionContext)ActionContextFactory.GetContext(context.Action.Parent, context.Game);
             var cost = parentContext.GetCost();
             int influenceAsMoney = int.Parse(context.Action.Location);
             context.Game.CurrentPlayer.UseInfluenceAsMoney(influenceAsMoney);
