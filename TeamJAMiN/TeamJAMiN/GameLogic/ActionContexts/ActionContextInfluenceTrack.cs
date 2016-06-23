@@ -46,8 +46,7 @@ namespace TeamJAMiN.GameLogic.ActionContexts
 
         public override bool IsValidGameState(ActionContext context)
         {
-            var parentState = context.Action.Parent.State;
-            var parentContext = ActionContextFactory.GetContext(parentState, context.Game);
+            var parentContext = ActionContextFactory.GetContext(context.Action.Parent, context.Game);
             if (parentContext is IMoneyTransactionContext == false)
             {
                 return false;

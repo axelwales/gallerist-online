@@ -12,12 +12,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static bool HasInfluenceAsMoney(this Player player, int amount)
         {
-            if(amount >= InfluenceToMoney.Count())
+            if(amount - 1 >= InfluenceToMoney.Count())
             {
                 return false;
             }
 
-            if(InfluenceToMoney[amount] > player.Influence)
+            if(InfluenceToMoney[amount - 1] > player.Influence)
             {
                 return false;
             }
@@ -48,7 +48,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static bool HasInfluenceAsFame(this Player player, int amount)
         {
-            if(player.Influence/5 < amount)
+            if(player.Influence/5 < amount - 1)
             {
                 return false;
             }
