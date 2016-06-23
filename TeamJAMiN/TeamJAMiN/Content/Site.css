@@ -133,6 +133,7 @@
     margin: 0 auto;
     background-color: rgba(22,31,40,1);
     position:relative;
+    z-index: 1;
 }
 .action-space-center {
     background-color: white;
@@ -162,7 +163,6 @@
     margin: 0 auto;
     position: relative;
     top: -10px;
-    z-index:-1;
 }
 .action-arrow-head {
     content:"";
