@@ -34,7 +34,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             action.Turn = turn;
             var toAdd = new List<GameAction> { action };
-            AddPendingHelper(turn, toAdd, position);
+            AddPendingActions(turn, toAdd, position);
         }
 
         public static void AddPendingActions(this GameTurn turn, List<GameActionState> actions, GameActionStatus status, bool isExecutable)
@@ -55,10 +55,10 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 var action = new GameAction { State = state, Status = status, IsExecutable = isExecutable, Parent = parent, Turn = turn };
                 newActions.Add(action);
             }
-            AddPendingHelper(turn, newActions, position);
+            AddPendingActions(turn, newActions, position);
         }
 
-        private static void AddPendingHelper(GameTurn turn, List<GameAction> newActions, PendingPosition position)
+        public static void AddPendingActions(GameTurn turn, List<GameAction> newActions, PendingPosition position)
         {
             if (position == PendingPosition.first)
             {

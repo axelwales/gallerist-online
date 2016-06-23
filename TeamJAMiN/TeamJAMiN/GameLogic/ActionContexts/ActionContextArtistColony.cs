@@ -10,14 +10,14 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public class ArtistColonyContext : ActionContext, IMoneyTransactionContext
     {
-        private static Dictionary<GameActionState, Type> _nameToState =
-            new Dictionary<GameActionState, Type> {
-                { GameActionState.ChooseLocation, typeof(ChooseLocation) },
-                { GameActionState.ArtistColony, typeof(ArtistColony) },
-                { GameActionState.ArtistDiscover, typeof(ArtistDiscover) },
-                { GameActionState.ArtBuy, typeof(ArtBuy) },
-                { GameActionState.Pass, typeof(Pass) }
-            };
+        private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
+        {
+            { GameActionState.ChooseLocation, typeof(ChooseLocation) },
+            { GameActionState.ArtistColony, typeof(ArtistColony) },
+            { GameActionState.ArtistDiscover, typeof(ArtistDiscover) },
+            { GameActionState.ArtBuy, typeof(ArtBuy) },
+            { GameActionState.Pass, typeof(Pass) }
+        };
 
         public ArtistColonyContext(Game game) : base(game, _nameToState) { }
         public ArtistColonyContext(Game game, GameAction action) : base(game, action, _nameToState) { }
@@ -87,6 +87,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             var game = context.Game;
             var turn = game.CurrentTurn;
+            var childActions = new List<GameAction>();
             var artist = context.Game.GetArtistByLocationString(context.Action.Location);
             var type = artist.ArtType;
             var art = context.Game.GetArtFromStack(type);
@@ -97,11 +98,11 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 artist.AvailableArt -= 1;
             }
             //todo let player pay with influence
-            turn.AddPendingAction(new GameAction { State = GameActionState.UseInfluenceAsMoney, Parent = context.Action, IsExecutable = false });
+            childActions.Add(new GameAction { State = GameActionState.UseInfluenceAsMoney, Parent = context.Action, IsExecutable = false });
             artist.Fame += art.Fame;
             artist.Fame += context.Game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);
             //todo let player increase fame using influence
-            turn.AddPendingAction(new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false });
+            childActions.Add(new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false });
             context.Game.CurrentPlayer.Art.Add(art);
             //todo give player tickets
             var ticketStates = art.GetArtTicketActionStates();
@@ -114,12 +115,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 }
                 else
                     isExecutable = false;
-                turn.AddPendingAction(new GameAction { State = ticketState, Parent = context.Action, IsExecutable = isExecutable });
+                childActions.Add(new GameAction { State = ticketState, Parent = context.Action, IsExecutable = isExecutable });
             }
             //todo remove comission if applicable
             //todo see if player should gain reputation tile
             context.Game.SetupNextArt(type);
             //todo replace below with a pass button or something.
+            TurnManager.AddPendingActions(turn, childActions, PendingPosition.first);
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
             AddPassAction(context);
         }

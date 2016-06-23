@@ -34,14 +34,17 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
             //todo make sure this executes all executable actions, not just the first.
             var nextActions = Game.CurrentTurn.GetNextActions();
-            if (nextActions.Count == 1)
+            while (nextActions != null)
             {
-                var nextAction = nextActions.Single();
+                var nextAction = nextActions.First();
                 if (nextAction.IsExecutable)
                 {
                     Game.CurrentTurn.RemoveAllSiblingActions(nextAction);
                     DoActionSingle(nextAction);
                 }
+                else
+                    break;
+                nextActions = Game.CurrentTurn.GetNextActions();
             }
             return true;
         }
