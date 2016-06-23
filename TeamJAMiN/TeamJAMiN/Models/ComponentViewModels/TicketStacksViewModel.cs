@@ -46,13 +46,12 @@ namespace TeamJAMiN.Models.ComponentViewModels
             if (IsValidActionState)
             {
                 var nextAction = game.CurrentTurn.GetNextActions().FirstOrDefault();
-                State = nextAction
-                    .State;
+                State = nextAction.State;
                 ActionLocation = type.ToString();
             }
             else
             {
-                State = GameActionState.ChooseTicketAny; //this is a dummy state as this variable should not be used if IsValidActionState is false.
+                State = GameActionState.NoAction; //this is a dummy state as this variable should not be used if IsValidActionState is false.
                 ActionLocation = "";
             }
 

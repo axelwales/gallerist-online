@@ -58,7 +58,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
         private int GetIndexOfCurrentStarLevel(GameArtist artist)
         {
             int i = 0;
-            while (artist.StarLevels[i] < artist.Fame) { i++; }
+            while (artist.StarLevels[i] <= artist.Fame) { i++; }
             return i;
         }
 
