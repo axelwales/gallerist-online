@@ -97,14 +97,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             {
                 artist.AvailableArt -= 1;
             }
-            //todo let player pay with influence
+            //todo let player NOT pay with influence
             childActions.Add(new GameAction { State = GameActionState.UseInfluenceAsMoney, Parent = context.Action, IsExecutable = false });
             artist.Fame += art.Fame;
             artist.Fame += context.Game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);
-            //todo let player increase fame using influence
+            //todo let player NOT increase fame using influence
             childActions.Add(new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false });
             context.Game.CurrentPlayer.Art.Add(art);
-            //todo give player tickets
             var ticketStates = art.GetArtTicketActionStates();
             foreach( GameActionState ticketState in ticketStates)
             {

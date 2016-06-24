@@ -100,6 +100,11 @@ namespace TeamJAMiN.Models.ComponentViewModels
                     UseInfluenceAsFame = true;
                 }
             }
+            if (index == currentPlayerInfluence)
+            {
+                UseInfluenceAsFame = true;
+                UseInfluenceAsMoney = true;
+            }
             if (index % 5 == 0 && index != 0)
             {
                 KickedOutCssClass += "influence-kicked-out";

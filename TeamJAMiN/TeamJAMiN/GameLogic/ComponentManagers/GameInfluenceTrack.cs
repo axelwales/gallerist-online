@@ -12,6 +12,9 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static bool HasInfluenceAsMoney(this Player player, int amount)
         {
+            if (amount == 0)
+                return true;
+
             if(amount - 1 >= InfluenceToMoney.Count())
             {
                 return false;
@@ -39,7 +42,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static void UseInfluenceAsMoney(this Player player, int amount)
         {
-            if (player.HasInfluenceAsMoney(amount))
+            if (amount != 0 && player.HasInfluenceAsMoney(amount))
             {
                 int max = player.GetMaxMoneyFromInfluence();
                 player.Influence = InfluenceToMoney[max - amount];
@@ -70,7 +73,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static void UseInfluenceAsFame(this Player player, int amount)
         {
-            if(player.HasInfluenceAsFame(amount))
+            if(amount != 0 && player.HasInfluenceAsFame(amount))
             {
                 int max = player.GetMaxFameFromInfluence();
                 player.Influence = 5 * (max - amount);

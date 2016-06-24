@@ -46,6 +46,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         }
         //todo add check if the player can take a contract
     }
+
     public class ContractDraft : ActionState
     {
         public ContractDraft()
@@ -69,6 +70,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         }
         //todo override validate method to check for valid contract location
     }
+
     public class ContractToPlayerBoard : ActionState
     {
         public ContractToPlayerBoard()
@@ -97,6 +99,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         //todo override validate method to check for valid contract location
         //and to check if the location has a contract that can be replaced
     }
+
     public class SellChooseArt : ActionState
     {
         public override void DoAction<SalesOfficeContext>(SalesOfficeContext context)
@@ -104,6 +107,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         }
     }
+
     public class SellChooseVisitor : ActionState
     {
         public override void DoAction<SalesOfficeContext>(SalesOfficeContext context)

@@ -1044,8 +1044,8 @@
     margin: 0;
     position: absolute;
     top: 5px;
-    z-index: 1;
 }
+
 .influence-marker {
     height: 20px;
     width: 20px;
