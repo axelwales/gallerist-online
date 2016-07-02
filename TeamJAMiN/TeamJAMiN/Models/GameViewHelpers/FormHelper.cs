@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using TeamJAMiN.Controllers.GameLogicHelpers;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.GameLogic;
 
 namespace TeamJAMiN.Models.GameViewHelpers
 {
@@ -20,12 +21,13 @@ namespace TeamJAMiN.Models.GameViewHelpers
         public static bool HasActionForm(string userName, Game game, GameActionState state, string location, bool otherConditions = true)
         {
             if(!otherConditions)
-            {
                 return false;
-            }
-            var isActive = IsActivePlayer(userName, game);
-            var isValidState = ActionManager.IsValidTransition(state, location, game, null, true);
-            return isActive && isValidState;
+
+            if (!IsActivePlayer(userName, game))
+                return false;
+
+            var request = new ActionRequest { State = state, ActionLocation = location };
+            return ActionManager.IsValidTransition(request, game);
         }
 
         public static void GetActionForm(this HtmlHelper html, string partialViewPath, Game game, GameActionState state, string location, object model = null)

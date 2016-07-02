@@ -12,18 +12,11 @@ namespace TeamJAMiN.Models.ComponentViewModels
     {
         public ArtistColonyViewModel(string userName, Game game)
         {
-            IsActivePlayer = FormHelper.IsActivePlayer(userName, game);
-            IsValidActionState = game.CurrentTurn.CurrentAction.State == GameActionState.ArtistColony || game.CurrentTurn.CurrentAction.State == GameActionState.MediaCenter;
-
             Game = game;
 
-            SetArtistLists(game);
-            SetViewStrings(game);
+            SetArtistLists(userName, game);
             SetArtList(game);
         }
-
-        public bool IsActivePlayer { get; private set; }
-        public bool IsValidActionState { get; private set; }
 
         public Game Game { get; private set; }
 
@@ -31,11 +24,10 @@ namespace TeamJAMiN.Models.ComponentViewModels
 
         public List<ArtistViewModel> BlueArtists { get; private set; }
         public List<ArtistViewModel> RedArtists { get; private set; }
-        public Dictionary<GameArtist, string> ArtistToPartialViewString { get; private set; }
 
         public List<GameArt> Art { get; private set; }
 
-        private void SetArtistLists(Game game)
+        private void SetArtistLists(string userName, Game game)
         {
             foreach (ArtistCategory category in new List<ArtistCategory> { ArtistCategory.blue, ArtistCategory.red })
             {
@@ -44,26 +36,11 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 foreach (ArtType type in ArtTypeList)
                 {
                     var artist = game.Artists.Where(a => a.ArtType == type && a.Category == category).First();
-                    result.Add(new ArtistViewModel(artist,currentState));
+                    result.Add(new ArtistViewModel(userName, game, artist, currentState));
                 }
                 if (category == ArtistCategory.blue) BlueArtists = result;
                 else RedArtists = result;
             }
-        }
-
-        private void SetViewStrings(Game game)
-        {
-            var result = new Dictionary<GameArtist, string>();
-            foreach (GameArtist artist in BlueArtists.Concat(RedArtists).Select(a => a.Artist))
-            {
-                var viewString = "~/Views/Game/ArtistColony/ArtistUndiscovered.cshtml";
-                if (artist.IsDiscovered)
-                {
-                    viewString = "~/Views/Game/ArtistColony/ArtistDiscovered.cshtml";
-                }
-                result.Add(artist, viewString);
-            }
-            ArtistToPartialViewString = result;
         }
 
         private void SetArtList(Game game)

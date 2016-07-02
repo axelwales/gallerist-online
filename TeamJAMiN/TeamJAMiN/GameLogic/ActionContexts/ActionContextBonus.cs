@@ -183,6 +183,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
     public abstract class ChooseTicket : BonusAction
     {
+        protected ChooseTicket()
+        {
+            RequiredParams = new HashSet<string> { "Location" };
+            TransitionTo = new HashSet<GameActionState> { };
+        }
+
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
             var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
@@ -191,30 +197,46 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             newAction.IsExecutable = true;
             context.Game.CurrentTurn.AddPendingAction(newAction);
         }
-    }
 
-    public class ChooseTicketAny : ChooseTicket
-    {
-        public ChooseTicketAny()
-        {
-            Name = GameActionState.ChooseTicketAny;
-            TransitionTo = new HashSet<GameActionState> { };
-        }
         public override bool IsValidGameState(ActionContext context)
         {
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            if (!base.IsValidGameState(context))
+                return false;
+
+            var isValidType = Enum.IsDefined(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
+            if (!isValidType)
+                return false;
+
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
+
+            if (!IsValidTicketType(context, type))
+                return false;
+
             var newAction = ActionManager.GetTicketAction(type);
             newAction.Parent = context.Action;
             return newAction.IsValidAction(context.Game);
         }
 
+        protected abstract bool IsValidTicketType(ActionContext context, VisitorTicketType type);
+    }
+
+    public class ChooseTicketAny : ChooseTicket
+    {
+        public ChooseTicketAny() : base()
+        {
+            Name = GameActionState.ChooseTicketAny;
+        }
+
+        protected override bool IsValidTicketType(ActionContext context, VisitorTicketType type)
+        {
+            return true;
+        }
     }
     public class ChooseTicketAnyTwo : ChooseTicket
     {
-        public ChooseTicketAnyTwo()
+        public ChooseTicketAnyTwo() : base()
         {
             Name = GameActionState.ChooseTicketAnyTwo;
-            TransitionTo = new HashSet<GameActionState> { };
         }
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
@@ -225,55 +247,44 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 context.Game.CurrentTurn.AddPendingAction(newAction);
             }
         }
-        public override bool IsValidGameState(ActionContext context)
+
+        protected override bool IsValidTicketType(ActionContext context, VisitorTicketType type)
         {
-            var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
-            if(context.Action.Parent.State == GameActionState.ChooseTicketAnyTwo)
+            if (context.Action.Parent.State == GameActionState.ChooseTicketAnyTwo)
             {
-                var previousType = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Parent.Location);
+                var previousType = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Parent.StateParams["Location"]);
                 if (previousType == type)
                     return false;
             }
-            var newAction = ActionManager.GetTicketAction(type);
-            newAction.Parent = context.Action;
-            return newAction.IsValidAction(context.Game);
+            return true;
         }
     }
     public class ChooseTicketCollectorVip : ChooseTicket
     {
-        public ChooseTicketCollectorVip()
+        public ChooseTicketCollectorVip() : base()
         {
             Name = GameActionState.ChooseTicketCollectorVip;
-            TransitionTo = new HashSet<GameActionState> { };
         }
-        public override bool IsValidGameState(ActionContext context)
+
+        protected override bool IsValidTicketType(ActionContext context, VisitorTicketType type)
         {
-            var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
             if (type == VisitorTicketType.investor)
                 return false;
-            var newAction = ActionManager.GetTicketAction(type);
-            newAction.Parent = context.Action;
-            return newAction.IsValidAction(context.Game);
+            return true;
         }
     }
     public class ChooseTicketCollectorInvestor : ChooseTicket
     {
-        public ChooseTicketCollectorInvestor()
+        public ChooseTicketCollectorInvestor() : base()
         {
             Name = GameActionState.ChooseTicketCollectorInvestor;
-            TransitionTo = new HashSet<GameActionState> { };
         }
-        public override bool IsValidGameState(ActionContext context)
+
+        protected override bool IsValidTicketType(ActionContext context, VisitorTicketType type)
         {
-            var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
             if (type == VisitorTicketType.vip)
                 return false;
-            var newAction = ActionManager.GetTicketAction(type);
-            newAction.Parent = context.Action;
-            return newAction.IsValidAction(context.Game);
+            return true;
         }
     }
     public class ChooseTicketToThrowAway : BonusAction
@@ -375,28 +386,30 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public ChooseArtistFame()
         {
             Name = GameActionState.ChooseArtistFame;
+            RequiredParams = new HashSet<string> { "Location" };
             TransitionTo = new HashSet<GameActionState> { };
         }
         public override void DoAction<TContext>(TContext context)
         {
             var game = context.Game;
-            var artist = game.GetArtistByLocationString(context.Action.Location);
+            var artist = game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             //todo make sure fame caps at 19 (celebrity status)
             artist.Fame += context.Game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);
             //todo check if artist just became a celebrity, if so give player celebrity bonus
         }
         public override bool IsValidGameState(ActionContext context)
         {
-            if (ArtManager.ValidateArtistLocationString(context.Action) == false)
-            {
+            if (base.IsValidGameState(context) == false)
                 return false;
-            }
+
+            if (ArtManager.ValidateArtistLocationString(context.Action) == false)
+                return false;
+
             var game = context.Game;
             var artist = game.GetArtistByLocationString(context.Action.Location);
             if (artist.IsDiscovered == false)
-            {
                 return false;
-            }
+
             //todo check if artist is a celebrity
             return true;
         }

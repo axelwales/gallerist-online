@@ -1,0 +1,26 @@
+﻿@model TeamJAMiN.Models.ComponentViewModels.OfficeAssistantsViewModel
+
+<div class="col-xs-12">
+    @if (Model.NumberOfAssistants > 0)
+    {
+        <div class="player-assistant-icon player-assistant-@Model.PlayerColor"></div>
+    }
+</div>
+<div class="col-xs-6">
+    @if (Model.NumberOfAssistants > 1)
+    {
+        <div class="player-assistant-icon player-assistant-@Model.PlayerColor"></div>
+    }
+</div>
+<div class="col-xs-6">
+    @if (Model.NumberOfAssistants > 2)
+    {
+        <div class="player-assistant-icon player-assistant-@Model.PlayerColor"></div>
+    }
+</div>
+<div class="col-xs-12">
+    @if (Model.NumberOfAssistants > 3)
+    {
+        <div class="player-assistant-icon player-assistant-@Model.PlayerColor"></div>
+    }
+</div>

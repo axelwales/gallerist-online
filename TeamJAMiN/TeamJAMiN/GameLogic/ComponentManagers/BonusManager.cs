@@ -14,7 +14,7 @@ namespace TeamJAMiN.GameLogic.ComponentManagers
             { BonusType.twoTickets, GameActionState.ChooseTicketAnyTwo },
             { BonusType.money, GameActionState.GetMoney },
             { BonusType.influence, GameActionState.GetInfluence },
-            { BonusType.fame, GameActionState.GetFame },
+            { BonusType.fame, GameActionState.ChooseArtistFame },
             { BonusType.plazaVisitor, GameActionState.ChooseVisitorFromPlaza }
         };
 
@@ -24,9 +24,19 @@ namespace TeamJAMiN.GameLogic.ComponentManagers
             { GameActionState.GetMoney, true },
             { GameActionState.GetInfluence, true },
             { GameActionState.GetFame, true },
+            { GameActionState.GetTicketCollector, true },
+            { GameActionState.GetTicketInvestor, true },
+            { GameActionState.GetTicketVip, true },
+            { GameActionState.ChooseArtistFame, false },
             { GameActionState.ChooseTicketAnyTwo, false },
             { GameActionState.ChooseTicketAny, false },
-            { GameActionState.ChooseVisitorFromPlaza, false }
+            { GameActionState.ChooseVisitorFromPlaza, false },
+            { GameActionState.ChooseContract, false },
+            { GameActionState.ChooseTicketCollectorVip, false },
+            { GameActionState.ChooseTicketCollectorInvestor, false },
+            { GameActionState.ChooseTicketToThrowAway, false },
+            { GameActionState.ChooseVisitorFromPlazaVipInvestor, false },
+            { GameActionState.ChooseVisitorFromBag, false },
         };
 
         public static GameActionState[] PromotionBonusStateByLevel = 

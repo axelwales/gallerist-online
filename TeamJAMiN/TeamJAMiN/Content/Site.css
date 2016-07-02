@@ -74,7 +74,7 @@
 #international-market-auction-action, #sales-office-contract-action, #sales-office-sell-action, #artist-colony-buy-action,
 #media-center-promote-action, #artist-colony-discover-action, #media-center-hire-action, .draw-contract-icon, .player-art-money,
 .player-art-type, .player-art-exhibit, .player-assistant-icon, .player-assistant-cost, .player-reputation-icon, .influence-marker-yellow,
- .influence-marker-blue, .influence-marker-orange, .influence-marker-purple {
+ .influence-marker-blue, .influence-marker-orange, .influence-marker-purple, .player-assistant-bonus {
     background-size:contain;
     background-repeat:no-repeat;
     background-position:50%;
@@ -337,6 +337,12 @@
 }
 .player-assistant-icon {
     height: 25px;
+    width: 25px;
+    margin: 0 auto;
+}
+.player-assistant-bonus {
+    height: 25px;
+    width: 25px;
 }
 .player-assistant-blue {
     background-image: url(Icons/AssistantBlue.svg)

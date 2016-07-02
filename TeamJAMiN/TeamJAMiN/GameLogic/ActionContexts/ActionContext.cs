@@ -60,7 +60,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public virtual void DoAction(GameActionState state)
         {
-            var action = new GameAction { State = state, IsExecutable = true, Location = "" };
+            var action = new GameAction { State = state, IsExecutable = true, Location = { } };
             DoAction(action);
         }
 
@@ -77,6 +77,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     {
         public GameActionState Name;
         public HashSet<GameActionState> TransitionTo;
+        public HashSet<string> RequiredParams;
         public virtual void DoAction<TContext>(TContext context)
             where TContext : ActionContext
         {
@@ -91,6 +92,18 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         }
         public virtual bool IsValidGameState(ActionContext context)
         {
+            if (context.Action == null)
+                return false;
+
+            if (context.Action.StateParams == null)
+                return false;
+
+            foreach (string key in RequiredParams)
+            {
+                if (!context.Action.StateParams.ContainsKey(key))
+                    return false;
+            }
+
             return true;
         }
 

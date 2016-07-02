@@ -38,6 +38,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public Promote()
         {
             Name = GameActionState.Promote;
+            RequiredParams = new HashSet<string> { "Location" };
             TransitionTo = new HashSet<GameActionState> { GameActionState.Pass };
         }
 
@@ -49,21 +50,17 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var artist = context.Game.GetArtistByLocationString(context.Action.Location);
             var promotion = ++artist.Promotion;
 
-            var bonusState = BonusManager.BonusTypeToState[artist.DiscoverBonus];
-            var bonusExecute = BonusManager.BonusStateIsExecutable[bonusState];
-            childActions.Add(new GameAction { State = bonusState, Parent = context.Action, IsExecutable = bonusExecute });
-
             //todo give player promotion bonus
             var promotionState = BonusManager.PromotionBonusStateByLevel[promotion - 1];
             var promotionExecute = BonusManager.BonusStateIsExecutable[promotionState];
             childActions.Add(new GameAction { State = promotionState, Parent = context.Action, IsExecutable = promotionExecute });
 
             context.Game.CurrentPlayer.Influence -= promotion;
-            artist.Fame += 1;
-            artist.Fame += context.Game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);
 
-            //todo allow players to increase fame with influence
-            childActions.Add(new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false });
+            var fame = 1 + context.Game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);
+            var fameAction = new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false };
+            fameAction.StateParams.Add("Fame", fame.ToString());
+            childActions.Add(fameAction);
 
             //todo replace below with a pass button or something.
             TurnManager.AddPendingActions(context.Game.CurrentTurn, childActions, PendingPosition.first);
@@ -73,19 +70,19 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public override bool IsValidGameState(ActionContext context)
         {
-            if ( !context.Action.ValidateArtistLocationString() )
-            {
+            if (!base.IsValidGameState(context))
                 return false;
-            }
+
+            if ( !context.Action.ValidateArtistLocationString() )
+                return false;
+
             var artist = context.Game.GetArtistByLocationString(context.Action.Location);
             if (artist.Promotion == 5)
-            {
                 return false;
-            }
+
             if( artist.Promotion + 1 > context.Game.CurrentPlayer.Influence)
-            {
                 return false;
-            }
+
             return true;
         }
     }
@@ -95,7 +92,18 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public Hire()
         {
             Name = GameActionState.Hire;
+            RequiredParams = new HashSet<string> { "Location" };
             TransitionTo = new HashSet<GameActionState> { GameActionState.Pass };
+        }
+
+        private int GetCost(int startIndex, int endIndex)
+        {
+            int cost = 0;
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+                cost += AssistantManager.AssistantCost[i];
+            }
+            return cost;
         }
 
         public override void DoAction<MediaCenterContext>(MediaCenterContext context)
@@ -103,16 +111,56 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             //todo move setting current action state to wrapper method
             var game = context.Game;
             var player = context.Game.CurrentPlayer;
-            //todo allow players to buy multiple assistants
-            player.Money -= player.GetNextAssistantCost();
-            player.GetNewAssistant();
-            //todo give player hire bonus
+            var childActions = new List<GameAction>();
+
+            var index = int.Parse(context.Action.StateParams["Location"]);
+            int currentIndex = context.Game.CurrentPlayer.Assistants.Count - 2;
+            int cost = GetCost(currentIndex, index);
+            player.Money -= cost;
+            for (int i = currentIndex; i <= index; i++)
+            {
+                player.GetNewAssistant();
+                var bonusState = AssistantManager.AssistantBonus[index];
+                if (bonusState != GameActionState.NoAction)
+                {
+                    var bonusExecutable = BonusManager.BonusStateIsExecutable[bonusState];
+                    childActions.Add(new GameAction
+                    {
+                        State = bonusState,
+                        IsExecutable = bonusExecutable,
+                        Parent = context.Action
+                    });
+                }
+            }
+            TurnManager.AddPendingActions(context.Game.CurrentTurn, childActions, PendingPosition.first);
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
             AddPassAction(context);
         }
-        //todo validate location string
-        //todo check is player has room in the office
-        //todo check if player has enough money
+
+        public override bool IsValidGameState(ActionContext context)
+        {
+            if (!base.IsValidGameState(context))
+                return false;
+
+            int index;
+            if (!int.TryParse(context.Action.StateParams["Location"], out index))
+                return false;
+            int currentIndex = context.Game.CurrentPlayer.Assistants.Count - 2;
+            if (index < currentIndex)
+                return false;
+            int availableDesks = context.Game.CurrentPlayer.Assistants.Where(a => a.Location == PlayerAssistantLocation.Office).Count();
+            int requiredDesks = index - currentIndex + 1;
+            if (requiredDesks > availableDesks)
+                return false;
+            int cost = GetCost(currentIndex, index);
+            int maxMoney = context.Game.CurrentPlayer.GetMaxMoneyFromInfluence();
+            if (cost > maxMoney)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

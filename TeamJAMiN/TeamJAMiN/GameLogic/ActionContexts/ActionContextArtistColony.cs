@@ -8,7 +8,7 @@ using TeamJAMiN.GameLogic.ComponentManagers;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
-    public class ArtistColonyContext : ActionContext, IMoneyTransactionContext
+    public class ArtistColonyContext : ActionContext
     {
         private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
         {
@@ -21,31 +21,6 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public ArtistColonyContext(Game game) : base(game, _nameToState) { }
         public ArtistColonyContext(Game game, GameAction action) : base(game, action, _nameToState) { }
-
-        public int GetCost()
-        {
-            if (_state is IMoneyTransactionState)
-            {
-                var transaction = (IMoneyTransactionState)_state;
-                return transaction.GetCost(this);
-            }
-            else
-                return -1;
-        }
-
-        public bool IsMoneyTransaction()
-        {
-            return _state is IMoneyTransactionState;
-        }
-
-        public void CleanUp()
-        {
-            if(_state is IMoneyTransactionState)
-            {
-                var transaction = (IMoneyTransactionState)_state;
-                transaction.CleanUp(this);
-            }
-        }
     }
 
     public class ArtistColony : LocationAction
@@ -58,29 +33,27 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         }
     }
 
-    public class ArtBuy : ActionState, IMoneyTransactionState
+    public class ArtBuy : ActionState
     {
         public ArtBuy()
         {
             Name = GameActionState.ArtBuy;
+            RequiredParams = new HashSet<string> { "Location" };
             TransitionTo = new HashSet<GameActionState> {  GameActionState.Pass };
         }
 
-        public int GetCost(ActionContext context)
+        public int GetCost(GameArtist artist, Game game)
         {
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
-            if(context.Game.CurrentPlayer.Commission == artist)
+            if(game.CurrentPlayer.Commission == artist)
             {
                 return artist.InitialFame;
             }
             return artist.Fame;
         }
-        
-        public void CleanUp(ActionContext context)
+
+        public int GetFame(GameArt art, Game game)
         {
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
-            if (context.Game.CurrentPlayer.Commission == artist)
-                context.Game.CurrentPlayer.Commission = null;
+            return art.Fame + game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);
         }
 
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
@@ -89,21 +62,23 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var turn = game.CurrentTurn;
             var childActions = new List<GameAction>();
             var artist = context.Game.GetArtistByLocationString(context.Action.Location);
-            var type = artist.ArtType;
-            var art = context.Game.GetArtFromStack(type);
+            var art = context.Game.GetArtFromStack(artist.ArtType);
             art.Artist = artist;
             context.Game.MoveFromArtStackToPlaza(art.Type);
             if (context.Game.CurrentPlayer.Commission != artist)
             {
                 artist.AvailableArt -= 1;
             }
-            //todo let player NOT pay with influence
-            childActions.Add(new GameAction { State = GameActionState.UseInfluenceAsMoney, Parent = context.Action, IsExecutable = false });
-            artist.Fame += art.Fame;
-            artist.Fame += context.Game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);
-            //todo let player NOT increase fame using influence
-            childActions.Add(new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false });
+
+            var moneyAction = new GameAction { State = GameActionState.UseInfluenceAsMoney, Parent = context.Action, IsExecutable = false };
+            moneyAction.StateParams.Add( "Cost", GetCost(artist, game).ToString() );
+            childActions.Add(moneyAction);
+
+            var fameAction = new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false };
+            fameAction.StateParams.Add("Fame", GetFame(art, game).ToString() );
+            childActions.Add(fameAction);
             context.Game.CurrentPlayer.Art.Add(art);
+
             var ticketStates = art.GetArtTicketActionStates();
             foreach( GameActionState ticketState in ticketStates)
             {
@@ -116,9 +91,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                     isExecutable = false;
                 childActions.Add(new GameAction { State = ticketState, Parent = context.Action, IsExecutable = isExecutable });
             }
-            //todo remove comission if applicable
+
+            if (context.Game.CurrentPlayer.Commission == artist)
+                context.Game.CurrentPlayer.Commission = null;
+
             //todo see if player should gain reputation tile
-            context.Game.SetupNextArt(type);
+            context.Game.SetupNextArt(artist.ArtType);
             //todo replace below with a pass button or something.
             TurnManager.AddPendingActions(turn, childActions, PendingPosition.first);
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
@@ -128,24 +106,23 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         //todo check if player has room to exhibit art
         public override bool IsValidGameState(ActionContext context)
         {
-            if (!context.Action.ValidateArtistLocationString())
-            {
+            if (!base.IsValidGameState(context))
                 return false;
-            }
+
+            if (!context.Action.ValidateArtistLocationString())
+                return false;
+
             var artist = context.Game.GetArtistByLocationString(context.Action.Location);
             if (!artist.IsDiscovered)
-            {
                 return false;
-            }
-            if(artist.AvailableArt == 0)
-            {
+
+            if (artist.AvailableArt == 0)
                 return false;
-            }
+
             if (context.Game.CurrentPlayer.Art.Where(a => a.IsSold == false).Count() > 3)
-            {
                 return false;
-            }
-            return base.IsValidGameState(context);
+
+            return true;
         }
     }
 
@@ -154,6 +131,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public ArtistDiscover()
         {
             Name = GameActionState.ArtistDiscover;
+            RequiredParams = new HashSet<string> { "Location" };
             TransitionTo = new HashSet<GameActionState> { GameActionState.Pass };
         }
 
@@ -162,37 +140,39 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var game = context.Game;
             var artist = context.Game.GetArtistByLocationString(context.Action.Location);
             artist.IsDiscovered = true;
+
             if(artist.Category == ArtistCategory.red)
             {
                 var newCollector = new GameVisitor { Location = GameVisitorLocation.Plaza, Type = VisitorTicketType.collector };
                 game.Visitors.Add(newCollector);
             }
+
             context.Game.CurrentPlayer.Commission = artist;
             artist.AvailableArt -= 1;
-            //todo give player artist bonus
+
             var bonusState = BonusManager.BonusTypeToState[artist.DiscoverBonus];
             var isExecutable = BonusManager.BonusStateIsExecutable[bonusState];
             context.Game.CurrentTurn.AddPendingAction(new GameAction { State = bonusState, Parent = context.Action, IsExecutable = isExecutable });
-            //todo replace below with a pass button or something.
+
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
             AddPassAction(context);
         }
         public override bool IsValidGameState(ActionContext context)
         {
-            if (!context.Action.ValidateArtistLocationString())
-            {
+            if (!base.IsValidGameState(context))
                 return false;
-            }
+
+            if (!context.Action.ValidateArtistLocationString())
+                return false;
+
             var artist = context.Game.GetArtistByLocationString(context.Action.Location);
             if (artist.IsDiscovered)
-            {
                 return false;
-            }
+
             if (context.Game.CurrentPlayer.Commission != null)
-            {
                 return false;
-            }
-            return base.IsValidGameState(context);
+
+            return true;
         }
     }
 }

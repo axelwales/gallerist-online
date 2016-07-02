@@ -20,7 +20,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static bool ValidateArtistLocationString (this GameAction action)
         {
-            var locationParams = action.Location.Split(':');
+            var locationParams = action.StateParams["Location"].Split(':');
             if( locationParams.Count() != 2)
             {
                 return false;

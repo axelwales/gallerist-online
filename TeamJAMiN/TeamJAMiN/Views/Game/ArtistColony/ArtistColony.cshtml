@@ -11,21 +11,21 @@
         @foreach (ArtistViewModel artistModel in artistList)
         {
             var artist = artistModel.Artist;
-            if (Model.IsActivePlayer && Model.IsValidActionState)
+            if (artistModel.HasFormAction)
             {
-                using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = artistModel.FormAction, actionLocation = artist.ArtType.ToString() + ":" + artist.Category.ToString() }, FormMethod.Post, new { role = "form" }))
+                using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = artistModel.FormAction, actionLocation = artistModel.Location }, FormMethod.Post, new { role = "form" }))
                 {
                     @Html.AntiForgeryToken()
                     <div class="row tile artist-colony-tile artist-@artist.Category.ToString() artist-@artist.ArtType.ToString() highlight">
                         <input type="submit" class="action-button" value="" />
-                        @Html.Partial(Model.ArtistToPartialViewString[artist], artistModel)
+                        @Html.Partial(artistModel.ViewString, artistModel)
                     </div>
 
                 }
             }
             else
             {
-                <div class="row tile artist-colony-tile artist-@artist.Category.ToString() artist-@artist.ArtType.ToString()">@Html.Partial(Model.ArtistToPartialViewString[artist], artistModel)</div>
+                <div class="row tile artist-colony-tile artist-@artist.Category.ToString() artist-@artist.ArtType.ToString()">@Html.Partial(artistModel.ViewString, artistModel)</div>
             }
         }
     </div>

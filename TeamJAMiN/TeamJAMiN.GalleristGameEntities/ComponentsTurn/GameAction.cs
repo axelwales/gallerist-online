@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace TeamJAMiN.GalleristComponentEntities
 {
-    public class GameAction
+    public class GameAction : ICloneable
     {
         public int Id { get; set; }
 
@@ -45,10 +47,41 @@ namespace TeamJAMiN.GalleristComponentEntities
         }
 
         public GameActionStatus Status { get; set; }
+
         public GameActionState State { get; set; }
-        public string Location { get; set; }
+        public Dictionary<string,string> StateParams { get; set; }
+
+        private string _location;
+        public string Location
+        {
+            get { return _location; }
+            set
+            {
+                StateParams["Location"] = value;
+                _location = value;
+            }
+        }
+
         public bool IsExecutable { get; set; }
         public bool IsComplete { get; set; }
+
         public int Order { get; set; }
+
+        public GameAction()
+        {
+            StateParams = new Dictionary<string, string>();
+        }
+
+        public object Clone()
+        {
+            var clone = new GameAction();
+            clone.State = State;
+            clone.Parent = Parent;
+            foreach (KeyValuePair<string,string> param in StateParams)
+            {
+                clone.StateParams.Add(param.Key, param.Value);
+            }
+            return clone;
+        }
     }
 }

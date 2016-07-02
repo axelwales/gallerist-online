@@ -31,5 +31,15 @@ namespace TeamJAMiN.Models.GameViewHelpers
             { GameReputationTileLocation.Tickets, BonusType.twoTickets },
             { GameReputationTileLocation.Visitor, BonusType.plazaVisitor },
         };
+
+        public static Dictionary<GameActionState, string> ActionStateToBonusClass = new Dictionary<GameActionState, string>
+        {
+            { GameActionState.NoAction, ""},
+            { GameActionState.GetTicketInvestor, "ticket-investor"},
+            { GameActionState.GetTicketVip, "ticket-vip"},
+            { GameActionState.GetInfluence, "bonus-influence"},
+            {  GameActionState.ChooseTicketAny, "ticket-any"},
+            {  GameActionState.GetMoney, "bonus-money"}
+        };
     }
 }

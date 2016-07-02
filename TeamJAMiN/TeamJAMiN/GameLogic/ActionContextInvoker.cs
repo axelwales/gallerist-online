@@ -28,7 +28,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 return false;
             }
             //todo remove the pending action that corresponds to the new action request
-            Game.CurrentTurn.RemoveAllSiblingActions(newAction.State);
+            Game.CurrentTurn.RemoveAllSiblingActions(newAction);
 
             DoActionSingle(newAction);
 

@@ -397,6 +397,7 @@
     <Compile Include="Models\ComponentViewModels\DraftContractViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InfluenceTrackViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InternationalMarketViewModel.cs" />
+    <Compile Include="Models\ComponentViewModels\OfficeAssistantsViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\PlayerArtViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\PlayerBoardViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\PlayerContractsViewModel.cs" />
@@ -626,6 +627,7 @@
     <Content Include="Views\Game\TicketStacks\TicketStacks.cshtml" />
     <Content Include="Views\Account\RegistrationForm.cshtml" />
     <Content Include="Views\Game\InfluenceTrack\InfluenceTrackSpace.cshtml" />
+    <Content Include="Views\Game\PlayerBoard\OfficeAssistants.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

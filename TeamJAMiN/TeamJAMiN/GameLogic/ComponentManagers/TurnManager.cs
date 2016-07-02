@@ -10,12 +10,6 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public static class TurnManager
     {
-        public static void SetCurrentAction(this GameTurn turn, GameActionState state, string location)
-        {
-            var action = new GameAction { State = state, Location = location, IsExecutable = true };
-            SetCurrentAction(turn, action);
-        }
-
         public static void SetCurrentAction(this GameTurn turn, GameAction action)
         {
             if (turn.CurrentAction != null)
@@ -37,20 +31,15 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             AddPendingActions(turn, toAdd, position);
         }
 
-        public static void AddPendingActions(this GameTurn turn, List<GameActionState> actions, GameActionStatus status, bool isExecutable)
+        public static void AddPendingActions(this GameTurn turn, List<GameActionState> states, GameActionStatus status, bool isExecutable)
         {
-            turn.AddPendingActions(actions, null, status, PendingPosition.first, isExecutable);
+            turn.AddPendingActions(states, null, status, PendingPosition.first, isExecutable);
         }
 
-        public static void AddPendingActions(this GameTurn turn, List<GameActionState> actions, GameActionStatus status, PendingPosition position, bool isExecutable)
-        {
-            turn.AddPendingActions(actions, null, status, position, isExecutable);
-        }
-
-        public static void AddPendingActions(this GameTurn turn, List<GameActionState> actions, GameAction parent, GameActionStatus status, PendingPosition position, bool isExecutable)
+        public static void AddPendingActions(this GameTurn turn, List<GameActionState> states, GameAction parent, GameActionStatus status, PendingPosition position, bool isExecutable)
         {
             var newActions = new List<GameAction>();
-            foreach (GameActionState state in actions)
+            foreach (GameActionState state in states)
             {
                 var action = new GameAction { State = state, Status = status, IsExecutable = isExecutable, Parent = parent, Turn = turn };
                 newActions.Add(action);
@@ -73,22 +62,6 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public static void RemovePendingAction(this GameTurn turn, GameAction action)
         {
             turn.PendingActions.Remove(action);
-        }
-
-        public static void RemovePendingAction(this GameTurn turn, GameActionState state)
-        {
-            var action = turn.PendingActions.FirstOrDefault(a => a.State == state);
-            if( action != null)
-            {
-                RemovePendingAction(turn, action);
-            }
-        }
-
-        public static void RemoveAllSiblingActions(this GameTurn turn, GameActionState state)
-        {
-            var pending = turn.PendingActions;
-            var action = pending.FirstOrDefault(a => a.State == state);
-            turn.RemoveAllSiblingActions(action);
         }
 
         public static void RemoveAllSiblingActions(this GameTurn turn, GameAction action)
@@ -125,20 +98,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             {
                 return new GameAction { State = request.State, Location = request.ActionLocation };
             }
-            action.Location = request.ActionLocation;
-            return action;
-        }
+            action.StateParams["Location"] = request.ActionLocation;
 
-        public static void SetParentPendingAction(GameAction action, GameTurn turn)
-        {
-            if (turn != null && turn.PendingActions != null)
-            {
-                var pendingAction = turn.PendingActions.FirstOrDefault(a => a.State == action.State);
-                if(pendingAction != null)
-                {
-                    action.Parent = pendingAction.Parent;
-                }
-            }
+            //deprecated: todo: remove
+            action.Location = request.ActionLocation;
+
+            return action;
         }
 
         public static void AddCompletedAction(this GameTurn turn, GameAction action)

@@ -15,6 +15,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 player.Commission.ArtType.ToString() + " " + player.Commission.Category.ToString() : "No Commissioned Art";
 
             SetUnemplayedAssitants(userName, player);
+            OfficeAssistants = new OfficeAssistantsViewModel(player);
             SetExhibitingArt(player);
             SetReputationLocations(userName, player);
             ContractView = new PlayerContractsViewModel(userName, player);
@@ -65,6 +66,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public Player Player { get; private set; }
         public string ComissionDisplayString { get; private set; }
         public List<UnemployedAssistantViewModel> UnemployedAssistants { get; private set; }
+        public OfficeAssistantsViewModel OfficeAssistants { get; private set; }
         public List<PlayerArtViewModel> ExhibitingArt { get; private set; }
         public List<ReputationTileLocationViewModel> TopRowTileLocationModels { get; private set; }
         public List<ReputationTileLocationViewModel> BottomRowTileLocationModels { get; private set; }

@@ -18,60 +18,35 @@ namespace TeamJAMiN.GameLogic.ActionContexts
         { }
     }
 
-    public interface IMoneyTransactionState
-    {
-        int GetCost(ActionContext context);
-        void CleanUp(ActionContext context);
-    }
-
-    public interface IMoneyTransactionContext
-    {
-        int GetCost();
-        bool IsMoneyTransaction();
-        void CleanUp();
-    }
-
     public class UseInfluenceAsMoney : ActionState
     {
         public override void DoAction<ActionContext>(ActionContext context)
         {
-            var parentContext = (IMoneyTransactionContext)ActionContextFactory.GetContext(context.Action.Parent, context.Game);
-            var cost = parentContext.GetCost();
-            int influenceAsMoney = int.Parse(context.Action.Location);
+            var cost = int.Parse(context.Action.StateParams["Cost"]);
+            int influenceAsMoney = int.Parse(context.Action.StateParams["Location"]);
             context.Game.CurrentPlayer.UseInfluenceAsMoney(influenceAsMoney);
             cost -= influenceAsMoney;
             context.Game.CurrentPlayer.Money -= cost;
-            parentContext.CleanUp();
         }
 
         public override bool IsValidGameState(ActionContext context)
         {
-            var parentContext = ActionContextFactory.GetContext(context.Action.Parent, context.Game);
-            if (parentContext is IMoneyTransactionContext == false)
-            {
+            if (!context.Action.StateParams.ContainsKey("Cost"))
                 return false;
-            }
-            var transactionContext = (IMoneyTransactionContext)parentContext;
-            if (transactionContext.IsMoneyTransaction() == false)
-            {
-                return false;
-            }
-            var cost = transactionContext.GetCost();
+            var cost = int.Parse(context.Action.StateParams["Cost"]);
+
             int influenceAsMoney;
             var locationIsInt = int.TryParse(context.Action.Location, out influenceAsMoney);
             if (locationIsInt == false)
-            {
                 return false;
-            }
+
             if (context.Game.CurrentPlayer.HasInfluenceAsMoney(influenceAsMoney) == false)
-            {
                 return false;
-            }
             cost -= influenceAsMoney;
+
             if (context.Game.CurrentPlayer.Money < cost)
-            {
                 return false;
-            }
+
             return true;
         }
     }
@@ -80,24 +55,27 @@ namespace TeamJAMiN.GameLogic.ActionContexts
     {
         public override void DoAction<InternationalMarketContext>(InternationalMarketContext context)
         {
-            int influenceAsFame = int.Parse(context.Action.Location);
+            int influenceAsFame = int.Parse(context.Action.StateParams["Location"]);
             context.Game.CurrentPlayer.UseInfluenceAsFame(influenceAsFame);
+
+            int baseFameIncrease = int.Parse(context.Action.StateParams["Fame"]);
             var artist = context.Game.GetArtistByLocationString(context.Action.Parent.Location);
-            artist.Fame += influenceAsFame;
+            artist.Fame += influenceAsFame + baseFameIncrease;
         }
 
         public override bool IsValidGameState(ActionContext context)
         {
+            if (!context.Action.StateParams.ContainsKey("Fame"))
+                return false;
+
             int influenceAsFame;
             var locationIsInt = int.TryParse(context.Action.Location, out influenceAsFame);
             if (locationIsInt == false)
-            {
                 return false;
-            }
+
             if (context.Game.CurrentPlayer.HasInfluenceAsFame(influenceAsFame) == false)
-            {
                 return false;
-            }
+
             return true;
         }
     }

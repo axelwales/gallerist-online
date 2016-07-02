@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.GameLogic;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
@@ -40,32 +41,16 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return invoker.IsValidGameState(action);
         }
 
-        public static bool IsValidAction(GameActionState state, string actionLocation, Game game, GameAction parent = null)
+        public static bool IsValidTransition(this GameAction action, Game game)
         {
-            var action = new GameAction { State = state, Location = actionLocation, Parent = parent };
-            return action.IsValidAction(game);
-        }
-
-        public static bool IsValidTransition(this GameAction action, Game game, bool getParent = false)
-        {
-            if(getParent)
-            {
-                TurnManager.SetParentPendingAction(action, game.CurrentTurn);
-            }
             var invoker = new ActionContextInvoker(game);
             return invoker.IsValidTransition(action);
         }
 
-        public static bool IsValidTransition(GameActionState state, string actionLocation, Game game, GameAction parent = null, bool getParent = false)
+        public static bool IsValidTransition(ActionRequest request, Game game)
         {
-            var action = new GameAction { State = state, Location = actionLocation, Parent = parent };
-            return action.IsValidTransition(game, getParent);
-        }
-
-        public static bool IsValidTicketBonus(GameActionState state, Game game, VisitorTicketType type, GameAction parent = null)
-        {
-            var actionLocation = type.ToString();
-            return IsValidTransition(state, actionLocation, game, parent);
+            var action = TurnManager.GetPendingAction(game.CurrentTurn, request);
+            return action.IsValidTransition(game);
         }
 
         public static bool IsValidTicketBonus(Game game, VisitorTicketType type)
@@ -73,9 +58,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var nextAction = game.CurrentTurn.GetNextActions().FirstOrDefault();
             if (nextAction == null)
                 return false;
-            var state = nextAction.State;
-            var parent = nextAction.Parent;
-            switch(state)
+            switch(nextAction.State)
             {
                 case GameActionState.ChooseTicketAny:
                 case GameActionState.ChooseTicketAnyTwo:
@@ -86,7 +69,9 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 default:
                     return false;
             }
-            return IsValidTicketBonus(state, game, type, parent);
+            var action = (GameAction)nextAction.Clone();
+            action.StateParams["Location"] = type.ToString();
+            return IsValidTransition(action, game);
         }
     }
 }

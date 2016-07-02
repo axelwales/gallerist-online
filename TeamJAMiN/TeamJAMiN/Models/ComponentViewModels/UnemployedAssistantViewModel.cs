@@ -21,7 +21,8 @@ namespace TeamJAMiN.Models.ComponentViewModels
             State = GameActionState.Hire;
 
             AssistantIndex = index;
-            AssistantCost = AssistantManager.GetAssistantCostByIndex(index);
+            AssistantCost = AssistantManager.AssistantCost[index];
+            AssistantBonus = IconCss.ActionStateToBonusClass[AssistantManager.AssistantBonus[index]];
             IsAvailable = player.Assistants.Count - 2 <= index;
             SetAssistantCssClass(IsAvailable, player);
 
@@ -40,6 +41,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public bool IsAvailable { get; private set; }
 
         public string AssistantCssClass { get; private set; }
+        public string AssistantBonus { get; private set; }
 
         private void SetAssistantCssClass(bool isAvailable, Player player)
         {
