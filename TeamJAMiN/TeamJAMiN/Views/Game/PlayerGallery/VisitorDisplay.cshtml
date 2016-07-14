@@ -1,25 +1,47 @@
-﻿@model List<int>
+﻿@model VisitorDisplayViewModel
 @using TeamJAMiN.Models.ComponentViewModels
+@using TeamJAMiN.Models.GameViewHelpers
 
 <div class="row no-gutter visitor-display-icons">
     <div class="col-xs-4 no-padding">
-        <div class="visitor-investor gallery-visitor"></div>
+        @if(Model.HasInvestorAction)
+        {
+            Html.GetActionForm("~/Views/Game/PlayerGallery/VisitorIcon.cshtml", Model.Game, Model.FormAction, Model.InvestorLocation, Model.InvestorType);
+        }
+        else
+        {
+            @Html.Partial("~/Views/Game/PlayerGallery/VisitorIcon.cshtml", Model.InvestorType);
+        }
     </div>
     <div class="col-xs-4 no-padding">
-        <div class="visitor-collector gallery-visitor"></div>
+        @if (Model.HasCollectorAction)
+        {
+            Html.GetActionForm("~/Views/Game/PlayerGallery/VisitorIcon.cshtml", Model.Game, Model.FormAction, Model.CollectorLocation, Model.CollectorType);
+        }
+        else
+        {
+            @Html.Partial("~/Views/Game/PlayerGallery/VisitorIcon.cshtml", Model.CollectorType);
+        }
     </div>
     <div class="col-xs-4 no-padding">
-        <div class="visitor-vip gallery-visitor"></div>
+        @if (Model.HasVipAction)
+        {
+            Html.GetActionForm("~/Views/Game/PlayerGallery/VisitorIcon.cshtml", Model.Game, Model.FormAction, Model.VipLocation, Model.VipType);
+        }
+        else
+        {
+            @Html.Partial("~/Views/Game/PlayerGallery/VisitorIcon.cshtml", Model.VipType);
+        }
     </div>
 </div>
 <div class="row no-gutter visitor-display-counts">
     <div class="col-xs-4 no-padding">
-        <div class="visitor-investor-count gallery-visitor-count">@Model[0]</div>
+        <div class="visitor-investor-count gallery-visitor-count">@Model.Investors</div>
     </div>
     <div class="col-xs-4 no-padding">
-        <div class="visitor-collector-count gallery-visitor-count">@Model[1]</div>
+        <div class="visitor-collector-count gallery-visitor-count">@Model.Collectors</div>
     </div>
     <div class="col-xs-4 no-padding">
-        <div class="visitor-vip-count gallery-visitor-count">@Model[2]</div>
+        <div class="visitor-vip-count gallery-visitor-count">@Model.Vips</div>
     </div>
 </div>

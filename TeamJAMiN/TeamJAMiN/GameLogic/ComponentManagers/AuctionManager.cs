@@ -15,14 +15,21 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             { "TwoInfluence", 2 }
         };
 
-        public static Dictionary<string, int> PositioneByColumn = new Dictionary<string, int>()
+        public static Dictionary<string, int> PositionByColumn = new Dictionary<string, int>()
         {
             { "OneInfluence", 3 },
             { "ThreeInfluence", 1 },
             { "TwoInfluence", 2 }
         };
 
-        public static Dictionary<string, int> PositioneByRow = new Dictionary<string, int>()
+        public static Dictionary<string, int> CostByRow = new Dictionary<string, int>()
+        {
+            { "Auction1", 1 },
+            { "Auction3", 2 },
+            { "Auction6", 6 }
+        };
+
+        public static Dictionary<string, int> PositionByRow = new Dictionary<string, int>()
         {
             { "Auction1", 0 },
             { "Auction3", 1 },
@@ -45,7 +52,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static string GetAuctionColumn(this Game game)
         {
-            var currentLocation = game.CurrentTurn.CurrentAction.Location;
+            var currentLocation = game.CurrentTurn.CurrentAction.StateParams["Location"];
             return GetAuctionColumnByLocationString(currentLocation);
         }
 
@@ -57,7 +64,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static string GetAuctionRow(this Game game)
         {
-            var currentLocation = game.CurrentTurn.CurrentAction.Location;
+            var currentLocation = game.CurrentTurn.CurrentAction.StateParams["Location"];
             return GetAuctionRowByLocationString(currentLocation);
         }
 
@@ -78,13 +85,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static PlayerAssistantLocation GetAuctionLocation(this Game game)
         {
-            var location = game.CurrentTurn.CurrentAction.Location;
+            var location = game.CurrentTurn.CurrentAction.StateParams["Location"];
             return GetAuctionLocationByLocationString(location);
         }
 
         public static BonusType GetAuctionBonus(this Game game)
         {
-            var location = game.CurrentTurn.CurrentAction.Location;
+            var location = game.CurrentTurn.CurrentAction.StateParams["Location"];
             return GetBonusByAuctionLocationString(location);
         }
 
@@ -92,7 +99,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             var row = GetAuctionRowByLocationString(currentLocation);
             var column = GetAuctionColumnByLocationString(currentLocation);
-            var auctionIndex = PositioneByColumn[column] + 3 * PositioneByRow[row];
+            var auctionIndex = PositionByColumn[column] + 3 * PositionByRow[row];
             var location = (PlayerAssistantLocation)Enum.Parse(typeof(PlayerAssistantLocation), "Auction" + auctionIndex);
             return location;
         }

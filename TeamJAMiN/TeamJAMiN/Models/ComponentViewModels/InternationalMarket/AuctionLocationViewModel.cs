@@ -10,34 +10,34 @@ namespace TeamJAMiN.Models.ComponentViewModels
 {
     public class AuctionLocationViewModel
     {
-        public AuctionLocationViewModel(string userName, Game game, string column, string row)
-        {
-            IsActivePlayer = FormHelper.IsActivePlayer(userName, game);
-            IsValidActionState = game.CurrentTurn.CurrentAction.State == GameActionState.InternationalMarket;
-
-            Game = game;
-            Column = column;
-            Row = row;
-            SetActionLocation(row, column);
-            SetAuctionClass(ActionLocation);
-        }
-
         public Game Game { get; private set; }
 
         public string ActionLocation { get; private set; }
         public GameActionState State = GameActionState.Auction;
 
-        public bool IsActivePlayer { get; private set; }
         public bool IsValidActionState { get; private set; }
 
         private string Column { get; set; }
         private string Row { get; set; }
 
         public string AuctionClass { get; private set; }
+        public string AssistantCss { get; private set; }
 
-        private void SetActionLocation(string row, string col)
+        public AuctionLocationViewModel(string userName, Game game, string column, string row)
         {
-            ActionLocation = row + ':' + col;
+            Game = game;
+            Column = column;
+            Row = row;
+            ActionLocation = row + ':' + column;
+            AuctionClass = AssistantCss = "";
+
+            IsValidActionState = FormHelper.HasActionForm(userName, game, GameActionState.Auction, ActionLocation);
+
+            var assistant = AssistantManager.GetAssistantByIMLocation(game, row, column);
+            if (assistant != null)
+                AssistantCss = "im-assistant-icon player-assistant-" + assistant.Player.Color.ToString();
+            else
+                SetAuctionClass(ActionLocation);
         }
 
         private void SetAuctionClass(string actionLocation)

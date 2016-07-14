@@ -7,9 +7,9 @@ using TeamJAMiN.Models.GameViewHelpers;
 
 namespace TeamJAMiN.Models.ComponentViewModels
 {
-    public class ReputationTileLocationViewModel
+    public class PlayerReputationTileLocationViewModel
     {
-        public ReputationTileLocationViewModel(string userName, Player player, GameReputationTileLocation location)
+        public PlayerReputationTileLocationViewModel(string userName, Player player, GameReputationTileLocation location)
         {
             IsPlayerBoardOfActivePlayer = player.Id == player.Game.CurrentPlayer.Id;
             IsActivePlayer = FormHelper.IsActivePlayer(userName, player.Game);

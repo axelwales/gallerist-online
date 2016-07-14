@@ -13,6 +13,8 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             { GameActionState.InternationalMarket, typeof(InternationalMarketContext) },
             { GameActionState.Reputation, typeof(InternationalMarketContext) },
+            { GameActionState.ReputationToBoard, typeof(InternationalMarketContext) },
+            { GameActionState.MoveVisitorFromLobby, typeof(InternationalMarketContext) },
             { GameActionState.Auction, typeof(InternationalMarketContext) },
             { GameActionState.MediaCenter, typeof(MediaCenterContext) },
             { GameActionState.Promote, typeof(MediaCenterContext) },

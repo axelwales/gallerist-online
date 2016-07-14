@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.GameLogic.ComponentManagers;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public class BonusContext : NonLinearActionContext
     {
-        public BonusContext(Game game)
-            : base(game, new Dictionary<GameActionState, Type> {
+        private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
+        {
                 { GameActionState.GetTicketVip, typeof(GetTicketVip) },
                 { GameActionState.GetTicketInvestor, typeof(GetTicketInvestor) },
                 { GameActionState.GetTicketCollector, typeof(GetTicketCollector) },
@@ -27,8 +28,10 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 { GameActionState.ChooseVisitorFromBag, typeof(ChooseVisitorFromBag) },
                 { GameActionState.ChooseArtistFame, typeof(ChooseArtistFame) },
                 { GameActionState.GetFame, typeof(GetFame) }
-            })
-        { }
+        };
+
+        public BonusContext(Game game) : base(game, _nameToState) { }
+        public BonusContext(Game game, GameAction action) : base(game, action, _nameToState) { }
     }
     public abstract class BonusAction : ActionState
     {
@@ -104,9 +107,23 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
             var game = context.Game;
-            //todo check if this triggers a bonus
-            game.CurrentPlayer.GetNewAssistant();
+            var player = game.CurrentPlayer;
+            int index = player.Assistants.Count - 2;
+
+            player.GetNewAssistant();
+            var bonusState = AssistantManager.AssistantBonus[index];
+            if (bonusState != GameActionState.NoAction)
+            {
+                var bonusExecutable = BonusManager.BonusStateIsExecutable[bonusState];
+                game.CurrentTurn.AddPendingAction(new GameAction
+                {
+                    State = bonusState,
+                    IsExecutable = bonusExecutable,
+                    Parent = context.Action
+                });
+            }
         }
+
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
@@ -158,7 +175,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             var player = context.Game.CurrentPlayer;
             var fame = player.GetGalleryVisitorCountByType(VisitorTicketType.collector);
-            var artist = context.Game.GetArtistByLocationString(context.Action.Parent.Location);
+            var artist = context.Game.GetArtistByLocationString(context.Action.Parent.StateParams["Location"]);
             artist.Fame += fame;
         }
     }
@@ -171,12 +188,14 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         }
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
-            var newAction = new GameAction { Location = context.Action.Location, State = GameActionState.ContractDraft, IsExecutable = true };
+            var newAction = new GameAction { State = GameActionState.ContractDraft, IsExecutable = true };
+            newAction.StateParams["Location"] = context.Action.StateParams["Location"];
             context.Game.CurrentTurn.AddPendingAction(newAction);
         }
         public override bool IsValidGameState(ActionContext context)
         {
-            var newAction = new GameAction { Location = context.Action.Location, State = GameActionState.ContractDraft };
+            var newAction = new GameAction { State = GameActionState.ContractDraft };
+            newAction.StateParams["Location"] = context.Action.StateParams["Location"];
             return newAction.IsValidAction(context.Game);
         }
     }
@@ -191,7 +210,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             var newAction = ActionManager.GetTicketAction(type);
             newAction.Parent = context.Action;
             newAction.IsExecutable = true;
@@ -297,13 +316,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override void DoAction<TContext>(TContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             game.RemoveTicketByType(type);
         }
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             if( game.GetAvailableTicketsByType(type) <= 0 )
             {
                 return false;
@@ -321,13 +340,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override void DoAction<TContext>(TContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             game.CurrentPlayer.MoveVisitorPlazaToGallery(type);
         }
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             if (game.GetPlazaVisitorCountByType(type) <= 0)
             {
                 return false;
@@ -345,7 +364,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             if(type == VisitorTicketType.collector)
             {
                 return false;
@@ -367,13 +386,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override void DoAction<TContext>(TContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             game.CurrentPlayer.MoveVisitorBagToGallery(type);
         }
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             if (game.GetBagVisitorCountByType(type) <= 0)
             {
                 return false;
@@ -406,7 +425,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 return false;
 
             var game = context.Game;
-            var artist = game.GetArtistByLocationString(context.Action.Location);
+            var artist = game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             if (artist.IsDiscovered == false)
                 return false;
 

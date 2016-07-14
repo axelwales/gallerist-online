@@ -25,6 +25,7 @@ namespace TeamJAMiN.GalleristComponentEntities
         UseInfluenceAsMoney,
         UseInfluenceAsFame,
         GetFame,
-        NoAction
+        NoAction,
+        MoveVisitorFromLobby
     }
 }

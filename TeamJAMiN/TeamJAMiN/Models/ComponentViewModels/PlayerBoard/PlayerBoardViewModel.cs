@@ -28,16 +28,16 @@ namespace TeamJAMiN.Models.ComponentViewModels
 
         private void SetReputationLocations(string userName, Player player)
         {
-            var result = new List<ReputationTileLocationViewModel>();
+            var result = new List<PlayerReputationTileLocationViewModel>();
             foreach(GameReputationTileLocation location in TopRowLocations)
             {
-                result.Add(new ReputationTileLocationViewModel(userName, player, location));
+                result.Add(new PlayerReputationTileLocationViewModel(userName, player, location));
             }
             TopRowTileLocationModels = result;
-            result = new List<ReputationTileLocationViewModel>();
+            result = new List<PlayerReputationTileLocationViewModel>();
             foreach (GameReputationTileLocation location in BottomRowLocations)
             {
-                result.Add(new ReputationTileLocationViewModel(userName, player, location));
+                result.Add(new PlayerReputationTileLocationViewModel(userName, player, location));
             }
             BottomRowTileLocationModels = result;
         }
@@ -68,8 +68,8 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public List<UnemployedAssistantViewModel> UnemployedAssistants { get; private set; }
         public OfficeAssistantsViewModel OfficeAssistants { get; private set; }
         public List<PlayerArtViewModel> ExhibitingArt { get; private set; }
-        public List<ReputationTileLocationViewModel> TopRowTileLocationModels { get; private set; }
-        public List<ReputationTileLocationViewModel> BottomRowTileLocationModels { get; private set; }
+        public List<PlayerReputationTileLocationViewModel> TopRowTileLocationModels { get; private set; }
+        public List<PlayerReputationTileLocationViewModel> BottomRowTileLocationModels { get; private set; }
         public PlayerContractsViewModel ContractView { get; private set; }
     }
 }

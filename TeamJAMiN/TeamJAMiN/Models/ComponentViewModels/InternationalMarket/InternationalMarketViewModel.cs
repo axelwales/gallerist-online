@@ -3,30 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.Models.ComponentViewModels.InternationalMarket;
 using TeamJAMiN.Models.GameViewHelpers;
 
 namespace TeamJAMiN.Models.ComponentViewModels
 {
     public class InternationalMarketViewModel
     {
-        public InternationalMarketViewModel(string userName, Game game)
-        {
-            IsActivePlayer = FormHelper.IsActivePlayer(userName, game);
-            IsValidActionState = game.CurrentTurn.CurrentAction.State == GameActionState.InternationalMarket;
-
-            Game = game;
-
-            SetTiles(game);
-            SetAuctionLocations(userName, game);
-        }
-
-        public bool IsActivePlayer { get; private set; }
-        public bool IsValidActionState { get; private set; }
-
         public Game Game { get; private set; }
 
-        public Dictionary<ArtType,List<ReputationTileViewModel>> Tiles { get; private set; }
-        public Dictionary<string,List<AuctionLocationViewModel>> AuctionLocations { get; private set; }
+        public Dictionary<ArtType, List<IMReputationTileLocationViewModel>> Tiles { get; private set; }
+        public Dictionary<string, List<AuctionLocationViewModel>> AuctionLocations { get; private set; }
 
         public List<GameReputationTileLocation> Columns = new List<GameReputationTileLocation>
             { GameReputationTileLocation.OneInfluence, GameReputationTileLocation.TwoInfluence, GameReputationTileLocation.ThreeInfluence };
@@ -34,24 +21,29 @@ namespace TeamJAMiN.Models.ComponentViewModels
         public List<ArtType> TypeOrder = new List<ArtType> { ArtType.digital, ArtType.photo, ArtType.sculpture, ArtType.painting }; //reputation tile rows
         public List<string> AuctionRows = new List<string> { "Auction1", "Auction3", "Auction6" };
 
-        private void SetTiles(Game game)
+        public InternationalMarketViewModel(string userName, Game game)
         {
-            var result = new List<List<ReputationTileViewModel>>();
+            Game = game;
+
+            SetTiles(userName, game);
+            SetAuctionLocations(userName, game);
+        }
+
+        private void SetTiles(string userName, Game game)
+        {
+            var result = new List<List<IMReputationTileLocationViewModel>>();
             foreach ( ArtType row in TypeOrder)
             {
-                var rowList = new List<ReputationTileViewModel>();
+                var rowList = new List<IMReputationTileLocationViewModel>();
                 foreach(GameReputationTileLocation column in Columns)
                 {
-                    var tile = game.ReputationTiles.FirstOrDefault(r => r.Row == row && r.Column == column);
-                    if (tile != null)
-                        rowList.Add(new ReputationTileViewModel(tile));
-                    else
-                        rowList.Add(null);
+                    rowList.Add(new IMReputationTileLocationViewModel(userName, game, row, column));
                 }
                 result.Add(rowList);
             }
             Tiles = TypeOrder.Zip(result, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
         }
+
         private void SetAuctionLocations(string userName, Game game)
         {
             var rowHeader = new List<string> { "money-1", "money-2", "money-3" }; //the css class for the row header (displays the appropriate amount of money)
@@ -66,8 +58,6 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 result.Add(rowList);
             }
             AuctionLocations = rowHeader.Zip(result, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
-
         }
-
     }
 }

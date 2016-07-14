@@ -9,15 +9,15 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
     public class SetupContext : ActionContext
     {
-        public SetupContext(Game game)
-            : base(game, new Dictionary<GameActionState, Type>
-            {
-                { GameActionState.ChooseLocation, typeof(ChooseLocation) },
-                { GameActionState.Pass, typeof(Pass) },
-                { GameActionState.GameStart, typeof(GameStart) },
-            })
-        { }
+        private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
+        {
+            { GameActionState.ChooseLocation, typeof(ChooseLocation) },
+            { GameActionState.Pass, typeof(Pass) },
+            { GameActionState.GameStart, typeof(GameStart) },
+        };
 
+        public SetupContext(Game game) : base(game, _nameToState) { }
+        public SetupContext(Game game, GameAction action) : base(game, action, _nameToState) { }
     }
 
     public class GameStart : ActionState
@@ -73,10 +73,11 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             var game = context.Game;
             var currentPlayerLocation = game.CurrentPlayer.GalleristLocation;
-            if (currentPlayerLocation == (PlayerLocation)Enum.Parse(typeof(PlayerLocation), Name.ToString()))
+            if (currentPlayerLocation == location)
             {
                 return false;
             }
+            //todo check if child action states are legal
             return true;
         }
     }

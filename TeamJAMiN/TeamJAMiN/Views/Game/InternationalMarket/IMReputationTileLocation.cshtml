@@ -1,0 +1,30 @@
+﻿@model TeamJAMiN.Models.ComponentViewModels.InternationalMarket.IMReputationTileLocationViewModel
+
+@if (Model.TileViewModel != null)
+{
+    if (Model.IsValidAction)
+    {
+        using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = Model.State, actionLocation = Model.Location }, FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tile reputation-tile">
+                <input type="submit" class="action-button" value="" />
+                @Html.Partial("~/Views/Game/InternationalMarket/ReputationTile.cshtml", Model.TileViewModel)
+            </div>
+        }
+    }
+    else
+    {
+        <div class="tile reputation-tile">
+            @Html.Partial("~/Views/Game/InternationalMarket/ReputationTile.cshtml", Model.TileViewModel)
+        </div>
+    }
+}
+else
+{
+    <div class="tile reputation-tile-none">
+        <div class="@Model.AssistantCssClass"></div>
+    </div>
+}
+
+

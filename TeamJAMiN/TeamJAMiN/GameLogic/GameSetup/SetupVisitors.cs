@@ -79,7 +79,7 @@ namespace TeamJAMiN.Controllers.GameControllerHelpers
             {
                 newGame.SetupNextArt(type);
             }
-            newGame.DrawVisitors(4).UpdateVisitorLocation(GameVisitorLocation.Plaza);
+            newGame.DrawVisitors(4).UpdateVisitorLocation(GameVisitorLocation.Plaza, PlayerColor.none);
             foreach (Player player in newGame.Players)
             {
                 newGame.DrawVisitors(1).UpdateVisitorLocation(GameVisitorLocation.Lobby, player.Color);

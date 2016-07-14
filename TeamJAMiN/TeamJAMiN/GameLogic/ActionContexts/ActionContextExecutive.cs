@@ -6,17 +6,19 @@ using TeamJAMiN.GalleristComponentEntities;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
-    public class ActionContextExecutive : ActionContext
+    public class ExecutiveActionContext : ActionContext
     {
-        public ActionContextExecutive(Game game)
-            : base(game, new Dictionary<GameActionState, Type> {
-                { GameActionState.UseTicket, typeof(UseTicket) },
-                { GameActionState.MoveVisitorStart, typeof(MoveVisitorStart) },
-                { GameActionState.MoveVisitorEnd, typeof(MoveVisitorEnd) },
-                { GameActionState.UseContractBonus, typeof(UseContractBonus) },
-                { GameActionState.Pass, typeof(Pass) }
-            })
-        { }
+        private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
+        {
+            { GameActionState.UseTicket, typeof(UseTicket) },
+            { GameActionState.MoveVisitorStart, typeof(MoveVisitorStart) },
+            { GameActionState.MoveVisitorEnd, typeof(MoveVisitorEnd) },
+            { GameActionState.UseContractBonus, typeof(UseContractBonus) },
+            { GameActionState.Pass, typeof(Pass) }
+        };
+
+        public ExecutiveActionContext(Game game) : base(game, _nameToState) { }
+        public ExecutiveActionContext(Game game, GameAction action) : base(game, action, _nameToState) { }
     }
     public class UseTicket : ActionState
     {
@@ -36,7 +38,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
-            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.Location);
+            var type = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
             var ticketCount = game.CurrentPlayer.GetPlayerTicketCountByType(type);
             var visitorCount = game.Visitors.Where(v => v.Type == type && (v.Location == GameVisitorLocation.Plaza || v.Location == GameVisitorLocation.Lobby)).Count();
             if(ticketCount <= 0 || visitorCount <= 0)
@@ -57,13 +59,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
-            if(VisitorManager.ValidateVisitorLocationString(context.Action.Location) == false)
+            if(VisitorManager.ValidateVisitorLocationString(context.Action.StateParams["Location"]) == false)
             {
                 return false;
             }
-            var type = VisitorManager.GetVisitorTypeFromLocationString(context.Action.Location);
-            var location = VisitorManager.GetVisitorLocationFromLocationString(context.Action.Location);
-            var color = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.Location);
+            var type = VisitorManager.GetVisitorTypeFromLocationString(context.Action.StateParams["Location"]);
+            var location = VisitorManager.GetVisitorLocationFromLocationString(context.Action.StateParams["Location"]);
+            var color = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.StateParams["Location"]);
             if (location != GameVisitorLocation.Lobby && location != GameVisitorLocation.Plaza)
             {
                 return false;
@@ -88,13 +90,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             var game = context.Game;
 
-            var visitorLocation = VisitorManager.GetVisitorLocationFromLocationString(context.Action.Parent.Location);
-            var visitorPlayerColor = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.Parent.Location);
-            var visitorType = VisitorManager.GetVisitorTypeFromLocationString(context.Action.Parent.Location);
+            var visitorLocation = VisitorManager.GetVisitorLocationFromLocationString(context.Action.Parent.StateParams["Location"]);
+            var visitorPlayerColor = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.Parent.StateParams["Location"]);
+            var visitorType = VisitorManager.GetVisitorTypeFromLocationString(context.Action.Parent.StateParams["Location"]);
             var visitor = game.Visitors.FirstOrDefault(v => v.Type == visitorType && v.Location == visitorLocation && v.PlayerGallery == visitorPlayerColor);
 
-            var location = VisitorManager.GetVisitorLocationFromLocationString(context.Action.Location);
-            var color = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.Location);
+            var location = VisitorManager.GetVisitorLocationFromLocationString(context.Action.StateParams["Location"]);
+            var color = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.StateParams["Location"]);
 
             visitor.UpdateVisitorLocation(location, color);
 
@@ -104,18 +106,18 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
-            if (VisitorManager.ValidateVisitorLocationString(context.Action.Location) == false)
+            if (VisitorManager.ValidateVisitorLocationString(context.Action.StateParams["Location"]) == false)
             {
                 return false;
             }
-            var location = VisitorManager.GetVisitorLocationFromLocationString(context.Action.Location);
-            var color = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.Location);
+            var location = VisitorManager.GetVisitorLocationFromLocationString(context.Action.StateParams["Location"]);
+            var color = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.StateParams["Location"]);
             if (location != GameVisitorLocation.Lobby && location != GameVisitorLocation.Plaza && location != GameVisitorLocation.Gallery)
             {
                 return false;
             }
-            var visitorLocation = VisitorManager.GetVisitorLocationFromLocationString(context.Action.Parent.Location);
-            var visitorPlayerColor = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.Parent.Location);
+            var visitorLocation = VisitorManager.GetVisitorLocationFromLocationString(context.Action.Parent.StateParams["Location"]);
+            var visitorPlayerColor = VisitorManager.GetPlayerColorFromVisitorLocationString(context.Action.Parent.StateParams["Location"]);
             if( location == visitorLocation)
             {
                 return false;
@@ -133,7 +135,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 if(visitorLocation != GameVisitorLocation.Plaza && visitorPlayerColor != color)
                     return false;
             }
-            var visitorType = VisitorManager.GetVisitorTypeFromLocationString(context.Action.Parent.Location);
+            var visitorType = VisitorManager.GetVisitorTypeFromLocationString(context.Action.Parent.StateParams["Location"]);
             if (visitorType == VisitorTicketType.collector && location == GameVisitorLocation.Gallery)
             {
                 var collectorCount = context.Game.CurrentPlayer.GetGalleryVisitorCountByType(VisitorTicketType.collector);

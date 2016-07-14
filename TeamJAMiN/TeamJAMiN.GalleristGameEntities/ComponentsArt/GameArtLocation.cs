@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TeamJAMiN.GalleristComponentEntities
 {
-    public enum GameArtLocation
+    public enum PlayerArtLocation
     {
-        ArtStack, PlayerBoard
+        exhibit1, exhibit2, exhibit3, exhibit4
     }
 }

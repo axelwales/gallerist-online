@@ -47,7 +47,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             //todo move setting current action state to wrapper method
             var game = context.Game;
             var childActions = new List<GameAction>();
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
+            var artist = context.Game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             var promotion = ++artist.Promotion;
 
             //todo give player promotion bonus
@@ -76,7 +76,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if ( !context.Action.ValidateArtistLocationString() )
                 return false;
 
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
+            var artist = context.Game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             if (artist.Promotion == 5)
                 return false;
 
@@ -118,20 +118,13 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             int cost = GetCost(currentIndex, index);
             player.Money -= cost;
             for (int i = currentIndex; i <= index; i++)
-            {
-                player.GetNewAssistant();
-                var bonusState = AssistantManager.AssistantBonus[index];
-                if (bonusState != GameActionState.NoAction)
+                childActions.Add(new GameAction
                 {
-                    var bonusExecutable = BonusManager.BonusStateIsExecutable[bonusState];
-                    childActions.Add(new GameAction
-                    {
-                        State = bonusState,
-                        IsExecutable = bonusExecutable,
-                        Parent = context.Action
-                    });
-                }
-            }
+                    State = GameActionState.GetAssistant,
+                    IsExecutable = true,
+                    Parent = context.Action,
+                });
+
             TurnManager.AddPendingActions(context.Game.CurrentTurn, childActions, PendingPosition.first);
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);

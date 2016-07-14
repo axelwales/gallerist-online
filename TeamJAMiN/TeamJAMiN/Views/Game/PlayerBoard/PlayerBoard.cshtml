@@ -33,18 +33,18 @@
         <div class="row">
             <div class="col-xs-4">
                 <div class="row">
-                    @foreach (ReputationTileLocationViewModel tileModel in Model.TopRowTileLocationModels)
+                    @foreach (PlayerReputationTileLocationViewModel tileModel in Model.TopRowTileLocationModels)
                     {
                         <div class="col-xs-4 no-padding">
-                            @Html.Partial("~/Views/Game/PlayerBoard/ReputationTileLocation.cshtml", tileModel)
+                            @Html.Partial("~/Views/Game/PlayerBoard/PlayerReputationTileLocation.cshtml", tileModel)
                         </div>
                     }
                 </div>
                 <div class="row">
-                    @foreach (ReputationTileLocationViewModel tileModel in Model.BottomRowTileLocationModels)
+                    @foreach (PlayerReputationTileLocationViewModel tileModel in Model.BottomRowTileLocationModels)
                     {
                         <div class="col-xs-4 no-padding">
-                            @Html.Partial("~/Views/Game/PlayerBoard/ReputationTileLocation.cshtml", tileModel)
+                            @Html.Partial("~/Views/Game/PlayerBoard/PlayerReputationTileLocation.cshtml", tileModel)
                         </div>
                     }
                 </div>

@@ -96,12 +96,9 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var action = turn.PendingActions.FirstOrDefault(a => a.State == request.State);
             if(action == null)
             {
-                return new GameAction { State = request.State, Location = request.ActionLocation };
+                action = new GameAction { State = request.State };
             }
             action.StateParams["Location"] = request.ActionLocation;
-
-            //deprecated: todo: remove
-            action.Location = request.ActionLocation;
 
             return action;
         }
@@ -117,7 +114,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static void SetupFirstTurn(this Game newGame)
         {
-            var firstTurn = new GameTurn { TurnNumber = 0, Type = GameTurnType.Setup, CurrentAction = new GameAction { State = GameActionState.GameStart, Order = 0 } };
+            var firstTurn = new GameTurn { TurnNumber = 0, Type = GameTurnType.Setup, CurrentAction = new GameAction { State = GameActionState.GameStart } };
             newGame.Turns.Add(firstTurn);
             var next = new GameAction { State = GameActionState.Pass };
             (new ActionContextInvoker(newGame)).DoActionSingle(next);

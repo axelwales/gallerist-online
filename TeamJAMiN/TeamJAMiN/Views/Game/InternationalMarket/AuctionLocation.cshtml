@@ -1,6 +1,6 @@
 ﻿@model TeamJAMiN.Models.ComponentViewModels.AuctionLocationViewModel
 
-@if (Model.IsActivePlayer && Model.IsValidActionState)
+@if (Model.IsValidActionState)
 {
     using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = Model.State, actionLocation = Model.ActionLocation }, FormMethod.Post, new { role = "form" }))
     {
@@ -12,5 +12,5 @@
 }
 else
 {
-    <div class="@Model.AuctionClass auction-tile tile"></div>
+    <div class="@Model.AuctionClass @Model.AssistantCss auction-tile tile"></div>
 }

@@ -22,9 +22,9 @@ namespace TeamJAMiN.Models.ComponentViewModels
             InfluenceTrackModel = new InfluenceTrackViewModel(userName, game);
 
             SetLocationViewModels(userName, game);
-            SetGalleryModels(game);
+            SetGalleryModels(userName, game);
 
-            SetPlazaCounts(game);
+            Plaza = new VisitorDisplayViewModel(userName, game, null, GameVisitorLocation.Plaza);
 
             SetBoardModels(userName, game);
         }
@@ -39,27 +39,18 @@ namespace TeamJAMiN.Models.ComponentViewModels
             PlayerBoardModels = result;
         }
 
-        private void SetPlazaCounts(Game game)
-        {
-            var plazaVisitors = game.VisitorByLocation(GameVisitorLocation.Plaza);
-            var plazaInvestorCount = plazaVisitors.Where(v => v.Type == VisitorTicketType.investor).Count();
-            var plazaCollectorCount = plazaVisitors.Where(v => v.Type == VisitorTicketType.collector).Count();
-            var plazaVipCount = plazaVisitors.Where(v => v.Type == VisitorTicketType.vip).Count();
-            PlazaVisitorCounts = new List<int> { plazaInvestorCount, plazaCollectorCount, plazaVipCount };
-        }
-
-        private void SetGalleryModels(Game game)
+        private void SetGalleryModels(string userName, Game game)
         {
             var result = new List<PlayerGalleryViewModel>();
             foreach (PlayerColor color in TopGalleryOrder )
             {
-                result.Add(new PlayerGalleryViewModel(game, color));
+                result.Add(new PlayerGalleryViewModel(userName, game, color));
             }
             TopGalleryModels = result;
             result = new List<PlayerGalleryViewModel>();
             foreach (PlayerColor color in BottomGalleryOrder)
             {
-                result.Add(new PlayerGalleryViewModel(game, color));
+                result.Add(new PlayerGalleryViewModel(userName, game, color));
             }
             BottomGalleryModels = result;
         }
@@ -92,7 +83,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
         private List<PlayerColor> BottomGalleryOrder = new List<PlayerColor> { PlayerColor.blue, PlayerColor.orange };
         public List<PlayerGalleryViewModel> BottomGalleryModels { get; private set; }
 
-        public List<int> PlazaVisitorCounts { get; private set; }
+        public VisitorDisplayViewModel Plaza { get; private set; }
 
         public List<PlayerBoardViewModel> PlayerBoardModels { get; private set; }
     }

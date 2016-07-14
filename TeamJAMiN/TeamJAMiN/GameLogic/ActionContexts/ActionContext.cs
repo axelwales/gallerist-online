@@ -60,7 +60,8 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public virtual void DoAction(GameActionState state)
         {
-            var action = new GameAction { State = state, IsExecutable = true, Location = { } };
+            var action = new GameAction { State = state, IsExecutable = true };
+            action.StateParams["Location"] = "";
             DoAction(action);
         }
 
@@ -83,7 +84,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             if(TransitionTo.Count <= 1 )
             {
-                context.Game.CurrentTurn.AddPendingActions(TransitionTo.ToList(), GameActionStatus.Optional, false);
+                context.Game.CurrentTurn.AddPendingActions(TransitionTo.ToList(), context.Action, GameActionStatus.Optional, PendingPosition.first, false);
             }
             else
             {
@@ -116,10 +117,8 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
     public abstract class NonLinearActionContext : ActionContext
     {
-        protected NonLinearActionContext(Game game, Dictionary<GameActionState, Type> NameToState) : base(game, NameToState)
-        {
-
-        }
+        protected NonLinearActionContext(Game game, Dictionary<GameActionState, Type> nameToState) : base(game, nameToState) { }
+        protected NonLinearActionContext(Game game, GameAction action, Dictionary<GameActionState, Type> nameToState) : base(game, action, nameToState) { }
 
         public bool IsParentState { get; private set; }
         public ActionContext ParentContext { get; private set; }

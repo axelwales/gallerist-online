@@ -51,21 +51,8 @@ namespace TeamJAMiN.GalleristComponentEntities
         public GameActionState State { get; set; }
         public Dictionary<string,string> StateParams { get; set; }
 
-        private string _location;
-        public string Location
-        {
-            get { return _location; }
-            set
-            {
-                StateParams["Location"] = value;
-                _location = value;
-            }
-        }
-
         public bool IsExecutable { get; set; }
         public bool IsComplete { get; set; }
-
-        public int Order { get; set; }
 
         public GameAction()
         {

@@ -68,12 +68,12 @@ namespace TeamJAMiN.Models.ComponentViewModels
                 if (action.State == GameActionState.UseInfluenceAsMoney && UseInfluenceAsMoney)
                 {
                     State = GameActionState.UseInfluenceAsMoney;
-                    Location = GameInfluenceTrack.CalculateMoneySpentByInfluence(currentPlayerInfluence, index).ToString();
+                    Location = InfluenceManager.CalculateMoneySpentByInfluence(currentPlayerInfluence, index).ToString();
                 }
                 else if (action.State == GameActionState.UseInfluenceAsFame && UseInfluenceAsFame)
                 {
                     State = GameActionState.UseInfluenceAsFame;
-                    Location = GameInfluenceTrack.CalculateFameGainedByInfluence(currentPlayerInfluence, index).ToString();
+                    Location = InfluenceManager.CalculateFameGainedByInfluence(currentPlayerInfluence, index).ToString();
                 }
 
             }
@@ -81,9 +81,9 @@ namespace TeamJAMiN.Models.ComponentViewModels
 
         private void SetPropertiesByIndex(int index, int currentPlayerInfluence)
         {
-            if (GameInfluenceTrack.InfluenceToMoney.Contains(index))
+            if (InfluenceManager.InfluenceToMoney.Contains(index))
             {
-                var money = Array.IndexOf(GameInfluenceTrack.InfluenceToMoney, index);
+                var money = Array.IndexOf(InfluenceManager.InfluenceToMoney, index);
                 MoneyHtml = @"<div class=""influence-money-icon money-" + money + @"""></div>";
                 if (index < currentPlayerInfluence)
                 {

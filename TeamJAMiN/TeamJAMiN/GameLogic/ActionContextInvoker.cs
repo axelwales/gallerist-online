@@ -17,7 +17,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public ActionContextInvoker(Game game)
         {
             Game = game;
-            _context = ActionContextFactory.GetContext(game.CurrentTurn.CurrentAction.State, game);
+            _context = ActionContextFactory.GetContext(game.CurrentTurn.CurrentAction, game);
         }
 
         public bool DoAction(ActionRequest request)
@@ -81,7 +81,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public bool IsValidGameState(GameAction action)
         {
-            var context = ActionContextFactory.GetContext(action.State, Game);
+            var context = ActionContextFactory.GetContext(action, Game);
             return context.IsValidGameState(action);
         }
 

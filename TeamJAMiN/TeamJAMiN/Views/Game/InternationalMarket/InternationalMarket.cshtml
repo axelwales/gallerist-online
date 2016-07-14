@@ -1,4 +1,5 @@
 ﻿@using TeamJAMiN.Models.ComponentViewModels
+@using TeamJAMiN.Models.ComponentViewModels.InternationalMarket
 @model InternationalMarketViewModel
 @using TeamJAMiN.GalleristComponentEntities
 
@@ -40,37 +41,14 @@
 </div>
 @*reputation*@
 <div class="row">
-    @foreach (KeyValuePair<ArtType, List<ReputationTileViewModel>> typeModelPair in Model.Tiles)
+    @foreach (KeyValuePair<ArtType, List<IMReputationTileLocationViewModel>> typeModelPair in Model.Tiles)
     {
         <div class="row separate-top">
             <div class="col-xs-3"><div class="@typeModelPair.Key.ToString()-icon reputation-row-art-icon"></div></div>
-            @foreach (ReputationTileViewModel viewModel in typeModelPair.Value)
+            @foreach (IMReputationTileLocationViewModel model in typeModelPair.Value)
             {
                 <div class="col-xs-3">
-                    @if (viewModel != null)
-                    {
-                        if (Model.IsActivePlayer && Model.IsValidActionState)
-                        {
-                            using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Game.Id, gameAction = viewModel.State, actionLocation = viewModel.ActionLocation }, FormMethod.Post, new { role = "form" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                <div class="tile reputation-tile">
-                                    <input type="submit" class="action-button" value="" />
-                                    @Html.Partial("~/Views/Game/InternationalMarket/ReputationTile.cshtml", viewModel)
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="tile reputation-tile">
-                                @Html.Partial("~/Views/Game/InternationalMarket/ReputationTile.cshtml", viewModel)
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="tile reputation-tile-none"></div>
-                    }
+                    @Html.Partial("~/Views/Game/InternationalMarket/IMReputationTileLocation.cshtml", model)
                 </div>
             }
         </div>

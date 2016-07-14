@@ -68,7 +68,8 @@ namespace TeamJAMiN.Models.ComponentViewModels
         private bool ValidateSpace(Game game, PlayerLocation location)
         {
             var state = (GameActionState)Enum.Parse(typeof(GameActionState), location.ToString());
-            var action = new GameAction { State = state, Location = game.CurrentTurn.CurrentAction.Location };
+            var action = new GameAction { State = state };
+            action.StateParams["Location"] = location.ToString();
             var invoker = new ActionContextInvoker(game);
             return invoker.IsValidTransition(action);
         }

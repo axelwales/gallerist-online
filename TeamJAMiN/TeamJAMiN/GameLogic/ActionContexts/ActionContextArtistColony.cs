@@ -61,7 +61,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var game = context.Game;
             var turn = game.CurrentTurn;
             var childActions = new List<GameAction>();
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
+            var artist = context.Game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             var art = context.Game.GetArtFromStack(artist.ArtType);
             art.Artist = artist;
             context.Game.MoveFromArtStackToPlaza(art.Type);
@@ -112,7 +112,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if (!context.Action.ValidateArtistLocationString())
                 return false;
 
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
+            var artist = context.Game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             if (!artist.IsDiscovered)
                 return false;
 
@@ -138,7 +138,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
             var game = context.Game;
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
+            var artist = context.Game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             artist.IsDiscovered = true;
 
             if(artist.Category == ArtistCategory.red)
@@ -165,7 +165,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if (!context.Action.ValidateArtistLocationString())
                 return false;
 
-            var artist = context.Game.GetArtistByLocationString(context.Action.Location);
+            var artist = context.Game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             if (artist.IsDiscovered)
                 return false;
 

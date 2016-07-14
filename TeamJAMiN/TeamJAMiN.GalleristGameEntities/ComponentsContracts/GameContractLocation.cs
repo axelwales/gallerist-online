@@ -8,6 +8,7 @@ namespace TeamJAMiN.GalleristComponentEntities
 {
     public enum GameContractLocation
     {
-        Vip,Investor,Any,Draft0,Draft1,Draft2,Draft3,DrawDeck, ChooseLocation
+        Vip,Investor,Any,Draft0,Draft1,Draft2,Draft3,DrawDeck, ChooseLocation,
+        Discard
     }
 }
