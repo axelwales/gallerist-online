@@ -1,5 +1,6 @@
 ﻿@model PlayerBoardViewModel
 @using TeamJAMiN.Models.ComponentViewModels
+@using TeamJAMiN.Models.GameViewHelpers
 
 <div class="row">
     Player: @Model.Player.UserName <br />
@@ -20,9 +21,16 @@
                 @foreach (PlayerArtViewModel artModel in Model.ExhibitingArt)
                 {
                     <div class="col-xs-3">
-                            <div class="player-art-tile tile">
+                        <div class="player-art-tile tile">
+                            @if (artModel.HasActionForm)
+                            {
+                                Html.GetActionForm("~/Views/Game/PlayerBoard/PlayerArt.cshtml", Model.Player.Game, artModel.State, artModel.Location.ToString(), artModel);
+                            }
+                            else
+                            {
                                 @Html.Partial("~/Views/Game/PlayerBoard/PlayerArt.cshtml", artModel)
-                            </div>
+                            }
+                        </div>
                     </div>
                 }
             </div>

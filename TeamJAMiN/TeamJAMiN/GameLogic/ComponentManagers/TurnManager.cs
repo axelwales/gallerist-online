@@ -137,7 +137,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             //todo add turnstart action state, then add completed turn start action
             //todo add chooselocation to pending actions
-            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, CurrentPlayer = oldTurn.KickedOutPlayer };
+            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, CurrentPlayer = oldTurn.KickedOutPlayer, Type = GameTurnType.KickedOut, HasExecutiveAction = true };
             game.CurrentPlayerId = oldTurn.KickedOutPlayer.Id;
             game.Turns.Add(newTurn);
             newTurn.StartTurn();
@@ -146,14 +146,14 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public static void SetupTurn(this Game game, GameTurn oldTurn)
         {
             game.SetNextPlayer();
-            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, CurrentPlayer = game.CurrentPlayer };
+            var newTurn = new GameTurn { Game = game, TurnNumber = oldTurn.TurnNumber + 1, CurrentPlayer = game.CurrentPlayer, Type = GameTurnType.Location, HasExecutiveAction = true };
             game.Turns.Add(newTurn);
             newTurn.StartTurn();
         }
 
         public static void StartTurn(this GameTurn turn)
         {
-            var startAction = new GameAction { State = GameActionState.ChooseLocation };
+            var startAction = new GameAction { State = GameActionState.TurnStart };
             turn.CurrentAction = startAction;
             var invoker = new ActionContextInvoker(turn.Game);
             invoker.DoActionSingle(startAction);

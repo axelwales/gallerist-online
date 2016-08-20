@@ -16,7 +16,7 @@ namespace TeamJAMiN.Models.ComponentViewModels
 
             SetUnemplayedAssitants(userName, player);
             OfficeAssistants = new OfficeAssistantsViewModel(player);
-            SetExhibitingArt(player);
+            SetExhibitingArt(userName, player);
             SetReputationLocations(userName, player);
             ContractView = new PlayerContractsViewModel(userName, player);
         }
@@ -42,13 +42,13 @@ namespace TeamJAMiN.Models.ComponentViewModels
             BottomRowTileLocationModels = result;
         }
 
-        private void SetExhibitingArt(Player player)
+        private void SetExhibitingArt(string userName, Player player)
         {
             var result = new List<PlayerArtViewModel>();
             var artList = player.Art.Where(a => a.IsSold == false);
             foreach(GameArt art in artList)
             {
-                result.Add(new PlayerArtViewModel(art));
+                result.Add(new PlayerArtViewModel(userName, player, art));
             }
             ExhibitingArt = result;
         }

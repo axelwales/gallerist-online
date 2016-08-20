@@ -8,24 +8,6 @@ namespace TeamJAMiN.GalleristComponentEntities
 {
     public class GameArt
     {
-        public GameArt(TemplateArt temp)
-        {
-            Type = temp.Type;
-            Fame = temp.Fame;
-            NumTickets = temp.NumTickets;
-            FirstTicket = temp.FirstTicket;
-            if(temp.NumTickets >= 2)
-                SecondTicket = temp.SecondTicket;
-            else
-                SecondTicket = new VisitorTicketType[] { };
-        }
-
-        public GameArt()
-        {
-            FirstTicket = new VisitorTicketType[] { };
-            SecondTicket = new VisitorTicketType[] { };
-        }
-
         public int Id { get; set; }  
         public ArtType Type { get; set; }
         public GameArtist Artist { get; set; }
@@ -62,6 +44,24 @@ namespace TeamJAMiN.GalleristComponentEntities
             {
                 SecondTicketData = String.Join(";", value.Select(v => v.ToString()).ToArray());
             }
+        }
+
+        public GameArt(TemplateArt temp)
+        {
+            Type = temp.Type;
+            Fame = temp.Fame;
+            NumTickets = temp.NumTickets;
+            FirstTicket = temp.FirstTicket;
+            if (temp.NumTickets >= 2)
+                SecondTicket = temp.SecondTicket;
+            else
+                SecondTicket = new VisitorTicketType[] { };
+        }
+
+        public GameArt()
+        {
+            FirstTicket = new VisitorTicketType[] { };
+            SecondTicket = new VisitorTicketType[] { };
         }
     }
 }

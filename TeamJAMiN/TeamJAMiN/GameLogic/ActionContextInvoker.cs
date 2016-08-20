@@ -79,6 +79,17 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return false;
         }
 
+        public bool IsValidTransition(GameActionState state, string location)
+        {
+            if (Game.CurrentTurn.GetNextActions().Any(a => a.State == state))
+            {
+                var action = Game.CurrentTurn.GetNextActions().First(a => a.State == state);
+                action.StateParams["Location"] = location;
+                return IsValidGameState(action);
+            }
+            return false;
+        }
+
         public bool IsValidGameState(GameAction action)
         {
             var context = ActionContextFactory.GetContext(action, Game);

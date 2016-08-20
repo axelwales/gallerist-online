@@ -17,6 +17,7 @@ namespace TeamJAMiN.GalleristComponentEntities
         public Game Game { get; set; }
         public Player CurrentPlayer { get; set; }
         public Player KickedOutPlayer { get; set; }
+        public bool HasExecutiveAction { get; set; }
 
         [NotMapped]
         GameAction _currentAction { get; set; }

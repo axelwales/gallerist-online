@@ -88,5 +88,25 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             }
             return result;
         }
+
+        public static GameArt GetPlayerArtByLocationString( Player player, string artLocation )
+        {
+            int order;
+            if (int.TryParse(artLocation, out order) == false)
+                return null;
+
+            return player.Art.FirstOrDefault(a => a.Order == order && a.IsSold == false);            
+        }
+
+        public static void SellArt(Player player, string artLocation)
+        {
+            var art = GetPlayerArtByLocationString(player, artLocation);
+
+            if (art != null)
+            {
+                art.IsSold = true;
+                player.Money += art.Artist.Fame;
+            }
+        }
     }
 }

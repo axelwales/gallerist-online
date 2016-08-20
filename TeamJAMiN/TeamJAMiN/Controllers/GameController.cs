@@ -143,7 +143,7 @@ namespace TeamJAMiN.Controllers
             {
                 var gameResponse = GameManager.GetGame(id, galleristContext);
 
-                 if (gameResponse.Success && gameResponse.Game.IsStarted)
+                if (gameResponse.Success && gameResponse.Game.IsStarted)
                 {
                     var userName = User.Identity.Name;
                     var playModel = new PlayViewModel(userName, gameResponse.Game);

@@ -46,7 +46,7 @@ namespace TeamJAMiN.Models.GameViewHelpers
 
         public static string InsertSubmitElement(string partialView)
         {
-            Regex r = new Regex("<div.*?>");
+            Regex r = new Regex("(?s)<div.*?>");
             string startTag = r.Match(partialView).ToString();
             string remainder = r.Replace(partialView, "", 1);
             return startTag + "<input type=\"submit\" class=\"action-button\" value=\"\" />" + remainder;

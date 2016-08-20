@@ -38,7 +38,6 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         //need a solution for transition validation, possibly compile a list of places the bonus action occurs, and use base.IsValidTransition
         //possibly add a checkPendingAction method to validate transition and enforce setting a pending action after a bonus
         //possibly add a set transition method just for bonus actions that caller can use since it probably knows what happens next
-        //oh we can use the set transition method for handling executive actions too? except an in memory solution doesn't really work
     }
 
     public abstract class GetTicket : BonusAction

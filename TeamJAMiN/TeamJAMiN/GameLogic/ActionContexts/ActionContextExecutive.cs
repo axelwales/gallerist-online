@@ -20,6 +20,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public ExecutiveActionContext(Game game) : base(game, _nameToState) { }
         public ExecutiveActionContext(Game game, GameAction action) : base(game, action, _nameToState) { }
     }
+
     public class UseTicket : ActionState
     {
         public UseTicket()

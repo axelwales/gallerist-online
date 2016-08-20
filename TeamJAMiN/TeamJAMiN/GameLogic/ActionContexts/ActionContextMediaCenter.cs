@@ -11,7 +11,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     {
         private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
         {
-            { GameActionState.ChooseLocation, typeof(ChooseLocation) },
+            { GameActionState.TurnStart, typeof(TurnStart) },
             { GameActionState.MediaCenter, typeof(MediaCenter) },
             { GameActionState.Promote, typeof(Promote) },
             { GameActionState.Hire, typeof(Hire) },
@@ -115,8 +115,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
             var index = int.Parse(context.Action.StateParams["Location"]);
             int currentIndex = context.Game.CurrentPlayer.Assistants.Count - 2;
+
             int cost = GetCost(currentIndex, index);
-            player.Money -= cost;
+            var payAction = new GameAction { State = GameActionState.UseInfluenceAsMoney, Parent = context.Action, IsExecutable = false };
+            payAction.StateParams["Cost"] = cost.ToString();
+            childActions.Add(payAction);
+
             for (int i = currentIndex; i <= index; i++)
                 childActions.Add(new GameAction
                 {

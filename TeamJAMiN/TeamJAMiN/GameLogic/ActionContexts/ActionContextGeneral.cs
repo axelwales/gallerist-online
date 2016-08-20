@@ -11,7 +11,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     {
         private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
         {
-            { GameActionState.ChooseLocation, typeof(ChooseLocation) },
+            { GameActionState.TurnStart, typeof(TurnStart) },
             { GameActionState.Pass, typeof(Pass) },
             { GameActionState.GameStart, typeof(GameStart) },
         };
@@ -30,13 +30,20 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     }
 
 
-    public class ChooseLocation : ActionState
+    public class TurnStart : ActionState
     {
-        public ChooseLocation()
+        public TurnStart()
         {
-            Name = GameActionState.ChooseLocation;
+            Name = GameActionState.TurnStart;
             TransitionTo = new HashSet<GameActionState>
-                { GameActionState.SalesOffice, GameActionState.InternationalMarket, GameActionState.MediaCenter, GameActionState.ArtistColony };
+            {
+                GameActionState.SalesOffice,
+                GameActionState.InternationalMarket,
+                GameActionState.MediaCenter,
+                GameActionState.ArtistColony,
+                GameActionState.UseTicket,
+                GameActionState.UseContractBonus
+            };
         }
     }
     public class Pass : ActionState
@@ -57,15 +64,34 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     public abstract class LocationAction: ActionState
     {
         public PlayerLocation location;
-        public override void DoAction<InternationalMarketContext>(InternationalMarketContext context)
+        public override void DoAction<ActionContext>(ActionContext context)
         {
             var game = context.Game;
-            var kickedPlayer = game.Players.FirstOrDefault(p => p.GalleristLocation == location);
-            if (kickedPlayer != null)
+            if( game.CurrentTurn.Type == GameTurnType.Location)
             {
-                game.KickedOutPlayerId = kickedPlayer.Id;
+                if(game.CurrentTurn.HasExecutiveAction)
+                {
+                    var executiveActions = new List<GameAction>
+                    {
+                        new GameAction { State = GameActionState.UseContractBonus, Parent = context.Action.Parent, Status = GameActionStatus.Optional, IsExecutable = false },
+                        new GameAction { State = GameActionState.UseTicket, Parent = context.Action.Parent, Status = GameActionStatus.Optional, IsExecutable = false },
+                    };
+                    TurnManager.AddPendingActions(game.CurrentTurn, executiveActions, PendingPosition.first);
+                }
+
+                var kickedPlayer = game.Players.FirstOrDefault(p => p.GalleristLocation == location);
+                if (kickedPlayer != null)
+                {
+                    game.CurrentTurn.KickedOutPlayer = kickedPlayer;
+                }
+                game.CurrentPlayer.GalleristLocation = location;
             }
-            game.CurrentPlayer.GalleristLocation = location;
+            if (game.CurrentTurn.Type == GameTurnType.KickedOut)
+            {
+                //todo remove influence
+                game.CurrentTurn.HasExecutiveAction = false;
+            }
+
             base.DoAction(context);
         }
 
@@ -73,10 +99,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         {
             var game = context.Game;
             var currentPlayerLocation = game.CurrentPlayer.GalleristLocation;
-            if (currentPlayerLocation == location)
-            {
+            if (currentPlayerLocation == location && game.CurrentTurn.Type == GameTurnType.Location)
                 return false;
-            }
+
+            if (currentPlayerLocation != location && game.CurrentTurn.Type == GameTurnType.KickedOut)
+                return false;
+
             //todo check if child action states are legal
             return true;
         }

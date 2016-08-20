@@ -25,12 +25,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static bool IsContractLocationEmpty(this Game game, GameContractLocation location)
         {
-            return game.Contracts.Any(c => c.Location == location);
+            return !game.Contracts.Any(c => c.Location == location) == false;
         }
 
         public static bool IsContractLocationEmpty(this Player player, GameContractLocation location)
         {
-            return player.Contracts.Any(c => c.Location == location);
+            return player.Contracts.Any(c => c.Location == location) == false;
         }
 
         public static bool HasAvailableContractLocation( this Player player)
@@ -128,8 +128,21 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return result;
         }
 
-        public static void DiscardContract(Player player, GameContractLocation location)
+        public static GameContract GetPlayerContractByLocationString(Player player, string contractLocation)
         {
+            GameContractLocation location;
+            if (Enum.TryParse(contractLocation, out location))
+                return null;
+
+            return player.Contracts.FirstOrDefault(c => c.Location == location);
+        }
+
+        public static void DiscardContract(Player player, string locationString)
+        {
+            GameContractLocation location;
+            if (!Enum.TryParse(locationString, out location))
+                return;
+
             var contract = player.Contracts.First(c => c.Location == location);
             contract.Location = GameContractLocation.Discard;
             player.Contracts.Remove(contract);

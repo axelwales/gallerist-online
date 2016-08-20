@@ -15,8 +15,10 @@ namespace TeamJAMiN.Models.ComponentViewModels
             IsActivePlayer = FormHelper.IsActivePlayer(userName, game);
 
             var actionManager = new ActionContextInvoker(game);
+
+            //todo replace with HasFormAction()
             DrawIsValidActionState = actionManager.IsValidTransition(GameActionState.ContractDraw);
-            DraftIsValidActionState = actionManager.IsValidTransition(GameActionState.ContractDraft);
+            DraftIsValidActionState = actionManager.IsValidTransition(GameActionState.ContractDraft, GameContractLocation.Draft0.ToString());
 
             Game = game;
             DrawState = GameActionState.ContractDraw;

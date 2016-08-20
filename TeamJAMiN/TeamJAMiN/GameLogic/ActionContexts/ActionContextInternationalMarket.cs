@@ -11,7 +11,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     {
         private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
         {
-            { GameActionState.ChooseLocation, typeof(ChooseLocation) },
+            { GameActionState.TurnStart, typeof(TurnStart) },
             { GameActionState.InternationalMarket, typeof(InternationalMarket) },
             { GameActionState.Reputation, typeof(Reputation) },
             { GameActionState.ReputationToBoard, typeof(ReputationToBoard) },
@@ -222,10 +222,10 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             game.CurrentPlayer.Influence += game.GetInfluenceByColumn(column);
 
             var row = context.Game.GetAuctionRow();
-
-            var cost = AuctionManager.CostByRow[context.Action.StateParams["Location"]];
+            var cost = AuctionManager.CostByRow[row];
             var payAction = new GameAction { State = GameActionState.UseInfluenceAsMoney, Parent = context.Action, IsExecutable = false };
-            payAction.StateParams["Location"] = cost.ToString();
+            payAction.StateParams["Cost"] = cost.ToString();
+            childActions.Add(payAction);
 
             //todo set assistant location
             var assistant = game.CurrentPlayer.Assistants.First(a => a.Location == PlayerAssistantLocation.Office);
@@ -236,6 +236,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var bonusState = BonusManager.BonusTypeToState[bonus];
             var bonusExecutable = BonusManager.BonusStateIsExecutable[bonusState];
             var bonusAction = new GameAction { State = bonusState, IsExecutable = bonusExecutable, Parent = context.Action };
+            childActions.Add(bonusAction);
             //todo replace below with a pass button or something.
             TurnManager.AddPendingActions(context.Game.CurrentTurn, childActions, PendingPosition.first);
             context.Game.CurrentTurn.AddCompletedAction(context.Action);

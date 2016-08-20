@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using TeamJAMiN.Controllers.GameLogicHelpers;
 using TeamJAMiN.GalleristComponentEntities;
 using TeamJAMiN.Models.GameViewHelpers;
 
@@ -53,12 +54,23 @@ namespace TeamJAMiN.Models.ComponentViewModels
             InvestorLocation = VisitorTicketType.investor.ToString() + ':' + location.ToString() + ':' + color.ToString();
             VipLocation = VisitorTicketType.vip.ToString() + ':' + location.ToString() + ':' + color.ToString();
 
-            HasCollectorAction = FormHelper.HasActionForm(userName, game, GameActionState.MoveVisitorFromLobby, CollectorLocation);
-            HasInvestorAction = FormHelper.HasActionForm(userName, game, GameActionState.MoveVisitorFromLobby, InvestorLocation);
-            HasVipAction = FormHelper.HasActionForm(userName, game, GameActionState.MoveVisitorFromLobby, VipLocation);
-
-            if (HasCollectorAction || HasInvestorAction || HasVipAction)
+            var nextStates = game.CurrentTurn.GetNextActions().Select(a => a.State);
+            if( nextStates.Contains(GameActionState.MoveVisitorFromLobby) )
+            {
                 FormAction = GameActionState.MoveVisitorFromLobby;
+                HasCollectorAction = FormHelper.HasActionForm(userName, game, FormAction, CollectorLocation);
+                HasInvestorAction = FormHelper.HasActionForm(userName, game, FormAction, InvestorLocation);
+                HasVipAction = FormHelper.HasActionForm(userName, game, FormAction, VipLocation);
+            }
+
+            else if (nextStates.Contains(GameActionState.SellChooseVisitor))
+            {
+                FormAction = GameActionState.SellChooseVisitor;
+                HasCollectorAction = FormHelper.HasActionForm(userName, game, FormAction, CollectorLocation);
+                HasInvestorAction = FormHelper.HasActionForm(userName, game, FormAction, InvestorLocation);
+                HasVipAction = FormHelper.HasActionForm(userName, game, FormAction, VipLocation);
+            }
+
             else
                 FormAction = GameActionState.NoAction;
         }

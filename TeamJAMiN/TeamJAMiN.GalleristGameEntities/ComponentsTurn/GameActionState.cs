@@ -8,7 +8,7 @@ namespace TeamJAMiN.GalleristComponentEntities
 {
     public enum GameActionState
     {
-        GameStart, ChooseLocation, Pass, GameEnd,
+        GameStart, TurnStart, Pass, GameEnd,
         SalesOffice, ContractDraw, ContractDraft, ContractToPlayerBoard, SellChooseArt, SellChooseVisitor,
         InternationalMarket, Reputation, ReputationToBoard, Auction,
         ArtistColony, ArtistDiscover, ArtBuy,
@@ -26,6 +26,7 @@ namespace TeamJAMiN.GalleristComponentEntities
         UseInfluenceAsFame,
         GetFame,
         NoAction,
-        MoveVisitorFromLobby
+        MoveVisitorFromLobby,
+        SellChooseContract
     }
 }

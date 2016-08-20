@@ -81,7 +81,8 @@ namespace TeamJAMiN.GalleristComponentEntities.ComponentsTurn
                 node.Remove(action);
                 if (node.Count == 0)
                     Remove(node);
-                UpdateData();
+                else
+                    UpdateData();
             }
         }
 

@@ -12,7 +12,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
     {
         private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
         {
-            { GameActionState.ChooseLocation, typeof(ChooseLocation) },
+            { GameActionState.TurnStart, typeof(TurnStart) },
             { GameActionState.ArtistColony, typeof(ArtistColony) },
             { GameActionState.ArtistDiscover, typeof(ArtistDiscover) },
             { GameActionState.ArtBuy, typeof(ArtBuy) },
@@ -59,7 +59,6 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public override void DoAction<ArtistColonyContext>(ArtistColonyContext context)
         {
             var game = context.Game;
-            var turn = game.CurrentTurn;
             var childActions = new List<GameAction>();
             var artist = context.Game.GetArtistByLocationString(context.Action.StateParams["Location"]);
             var art = context.Game.GetArtFromStack(artist.ArtType);
@@ -77,18 +76,19 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             var fameAction = new GameAction { State = GameActionState.UseInfluenceAsFame, Parent = context.Action, IsExecutable = false };
             fameAction.StateParams.Add("Fame", GetFame(art, game).ToString() );
             childActions.Add(fameAction);
-            context.Game.CurrentPlayer.Art.Add(art);
+
+            var player = context.Game.CurrentPlayer;
+            var exhibitingList = player.Art.Where(a => a.IsSold == false);
+            var order = 0;
+            if (exhibitingList.Count() != 0)
+                order = exhibitingList.OrderByDescending(a => a.Order).First().Order + 1;
+            art.Order = order;
+            player.Art.Add(art);
 
             var ticketStates = art.GetArtTicketActionStates();
             foreach( GameActionState ticketState in ticketStates)
             {
-                bool isExecutable;
-                if (ticketState == GameActionState.GetTicketVip || ticketState == GameActionState.GetTicketCollector || ticketState == GameActionState.GetTicketInvestor)
-                {
-                    isExecutable = true;
-                }
-                else
-                    isExecutable = false;
+                var isExecutable = BonusManager.BonusStateIsExecutable[ticketState];
                 childActions.Add(new GameAction { State = ticketState, Parent = context.Action, IsExecutable = isExecutable });
             }
 
@@ -98,7 +98,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             //todo see if player should gain reputation tile
             context.Game.SetupNextArt(artist.ArtType);
             //todo replace below with a pass button or something.
-            TurnManager.AddPendingActions(turn, childActions, PendingPosition.first);
+            TurnManager.AddPendingActions(game.CurrentTurn, childActions, PendingPosition.first);
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
             AddPassAction(context);
         }
