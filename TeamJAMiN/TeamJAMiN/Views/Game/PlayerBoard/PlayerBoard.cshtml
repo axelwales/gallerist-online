@@ -61,7 +61,17 @@
                 @Html.Partial("~/Views/Game/PlayerBoard/PlayerContracts.cshtml", Model.ContractView)
             </div>
             <div class="col-xs-2">
-                
+                @foreach (var ticketView in Model.TicketViews)
+                {
+                    if (ticketView.HasActionForm)
+                    {
+                        Html.GetActionForm("~/Views/Game/PlayerBoard/PlayerTicket.cshtml", Model.Player.Game, ticketView.State, ticketView.Location, ticketView);
+                    }
+                    else
+                    {
+                        Html.Partial("~/Views/Game/PlayerBoard/PlayerTicket.cshtml", ticketView);
+                    }
+                }
             </div>
         </div>
     </div>

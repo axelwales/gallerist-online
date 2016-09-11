@@ -139,15 +139,30 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
 
         public static void DiscardContract(Player player, string locationString)
         {
-            GameContractLocation location;
-            if (!Enum.TryParse(locationString, out location))
+            var contract = GetPlayerContractByLocationString(player, locationString);
+            if (contract == null)
                 return;
 
-            var contract = player.Contracts.First(c => c.Location == location);
             contract.Location = GameContractLocation.Discard;
             player.Contracts.Remove(contract);
+            ReturnAssistantFromContract(player, contract.Location);
+        }
+
+        public static void FlipContract(Player player, string locationString, GameContractOrientation orientation = GameContractOrientation.none)
+        {
+            var contract = GetPlayerContractByLocationString(player, locationString);
+            if (contract == null)
+                return;
+
+            contract.IsComplete = true;
+            contract.Orientation = orientation;
+            ReturnAssistantFromContract(player, contract.Location);
+        }
+
+        private static void ReturnAssistantFromContract(Player player, GameContractLocation location)
+        {
             var assistant = player.Assistants.FirstOrDefault(a => a.Location == ContractToAssistant[location]);
-            if(assistant != null)
+            if (assistant != null)
                 AssistantManager.MoveAssistantToOffice(assistant);
         }
     }

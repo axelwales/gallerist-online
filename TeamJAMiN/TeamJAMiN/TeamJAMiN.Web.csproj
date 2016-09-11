@@ -402,6 +402,7 @@
     <Compile Include="Models\ComponentViewModels\ArtistColony\ArtViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InternationalMarket\AuctionLocationViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InternationalMarket\IMReputationTileLocationViewModel.cs" />
+    <Compile Include="Models\ComponentViewModels\PlayerBoard\PlayerTicketViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\Tickets\ChooseTicketViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\SalesOffice\DraftContractViewModel.cs" />
     <Compile Include="Models\ComponentViewModels\InfluenceTrackViewModel.cs" />
@@ -640,6 +641,8 @@
     <Content Include="Views\Game\PlayerBoard\OfficeAssistants.cshtml" />
     <Content Include="Views\Game\PlayerGallery\VisitorIcon.cshtml" />
     <Content Include="Views\Game\InternationalMarket\IMReputationTileLocation.cshtml" />
+    <Content Include="Views\Game\PlayerBoard\PlayerTicket.cshtml" />
+    <Content Include="Views\Game\PlayerBoard\PlayerContract.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

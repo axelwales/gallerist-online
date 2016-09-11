@@ -1,0 +1,24 @@
+﻿@model TeamJAMiN.Models.ComponentViewModels.PlayerContractViewModel
+
+<div id="player-contract-@Model.Location.ToString().ToLower()" data-location="@Model.Location" class="contract-card tile player-contract @Model.EmptyCssClass">
+    @if (Model.Contract != null)
+    {
+        <div class="row no-gutter contract-art-row">
+            @* Art Type *@
+            <div class="col-xs-12 no-padding">
+                <div class="art-icon @Model.Contract.Art.ToString()-icon"></div>
+            </div>
+        </div>
+        <div class="row no-gutter contract-bonus-row">
+            @* Contract Action *@
+            <div class="col-xs-12 no-padding">
+                <div class="contract-bonus @Model.BonusClass"></div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="ticket-@Model.Ticket icon-lg icon-background margin-center"></div>
+    }
+</div>
+

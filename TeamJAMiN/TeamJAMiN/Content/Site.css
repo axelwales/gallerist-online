@@ -74,7 +74,7 @@
 #international-market-auction-action, #sales-office-contract-action, #sales-office-sell-action, #artist-colony-buy-action,
 #media-center-promote-action, #artist-colony-discover-action, #media-center-hire-action, .draw-contract-icon, .player-art-money,
 .player-art-type, .player-art-exhibit, .player-assistant-icon, .player-assistant-cost, .player-reputation-icon, .influence-marker-yellow,
- .influence-marker-blue, .influence-marker-orange, .influence-marker-purple, .player-assistant-bonus, .im-assistant-icon {
+ .influence-marker-blue, .influence-marker-orange, .influence-marker-purple, .player-assistant-bonus, .im-assistant-icon, .player-ticket {
     background-size:contain;
     background-repeat:no-repeat;
     background-position:50%;
@@ -298,6 +298,12 @@
 /*Player Boards*/
 .player-board {
     margin-top:100px;
+}
+.player-ticket {
+    height: 40px;
+    line-height:40px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 .player-contract {
     height: 130px;

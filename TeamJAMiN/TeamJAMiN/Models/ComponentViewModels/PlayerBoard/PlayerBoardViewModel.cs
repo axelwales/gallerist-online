@@ -3,11 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TeamJAMiN.GalleristComponentEntities;
+using TeamJAMiN.Models.ComponentViewModels.PlayerBoard;
 
 namespace TeamJAMiN.Models.ComponentViewModels
 {
     public class PlayerBoardViewModel
     {
+        public Player Player { get; private set; }
+        public string ComissionDisplayString { get; private set; }
+        public List<UnemployedAssistantViewModel> UnemployedAssistants { get; private set; }
+        public OfficeAssistantsViewModel OfficeAssistants { get; private set; }
+        public List<PlayerArtViewModel> ExhibitingArt { get; private set; }
+        public List<PlayerReputationTileLocationViewModel> TopRowTileLocationModels { get; private set; }
+        public List<PlayerReputationTileLocationViewModel> BottomRowTileLocationModels { get; private set; }
+        public PlayerContractsViewModel ContractView { get; private set; }
+        public List<PlayerTicketViewModel> TicketViews { get; private set; }
+
+        private List<GameReputationTileLocation> TopRowLocations = new List<GameReputationTileLocation>
+            { GameReputationTileLocation.Influence, GameReputationTileLocation.Money, GameReputationTileLocation.Fame };
+        private List<GameReputationTileLocation> BottomRowLocations = new List<GameReputationTileLocation>
+            { GameReputationTileLocation.Visitor, GameReputationTileLocation.Tickets, GameReputationTileLocation.Assistant };
+
         public PlayerBoardViewModel(string userName, Player player)
         {
             Player = player;
@@ -19,12 +35,16 @@ namespace TeamJAMiN.Models.ComponentViewModels
             SetExhibitingArt(userName, player);
             SetReputationLocations(userName, player);
             ContractView = new PlayerContractsViewModel(userName, player);
+            SetTickets(userName, Player);
         }
 
-        private List<GameReputationTileLocation> TopRowLocations = new List<GameReputationTileLocation>
-            { GameReputationTileLocation.Influence, GameReputationTileLocation.Money, GameReputationTileLocation.Fame };
-        private List<GameReputationTileLocation> BottomRowLocations = new List<GameReputationTileLocation>
-            { GameReputationTileLocation.Visitor, GameReputationTileLocation.Tickets, GameReputationTileLocation.Assistant };
+        private void SetTickets(string userName, Player player)
+        {
+            TicketViews = new List<PlayerTicketViewModel>();
+            TicketViews.Add(new PlayerTicketViewModel(userName, player, VisitorTicketType.vip));
+            TicketViews.Add(new PlayerTicketViewModel(userName, player, VisitorTicketType.investor));
+            TicketViews.Add(new PlayerTicketViewModel(userName, player, VisitorTicketType.collector));
+        }
 
         private void SetReputationLocations(string userName, Player player)
         {
@@ -62,14 +82,5 @@ namespace TeamJAMiN.Models.ComponentViewModels
             }
             UnemployedAssistants = result;
         }
-
-        public Player Player { get; private set; }
-        public string ComissionDisplayString { get; private set; }
-        public List<UnemployedAssistantViewModel> UnemployedAssistants { get; private set; }
-        public OfficeAssistantsViewModel OfficeAssistants { get; private set; }
-        public List<PlayerArtViewModel> ExhibitingArt { get; private set; }
-        public List<PlayerReputationTileLocationViewModel> TopRowTileLocationModels { get; private set; }
-        public List<PlayerReputationTileLocationViewModel> BottomRowTileLocationModels { get; private set; }
-        public PlayerContractsViewModel ContractView { get; private set; }
     }
 }

@@ -6,36 +6,51 @@ using TeamJAMiN.GalleristComponentEntities;
 
 namespace TeamJAMiN.Controllers.GameLogicHelpers
 {
-    public class ExecutiveActionContext : ActionContext
+    public class ExecutiveContext : ActionContext
     {
         private static Dictionary<GameActionState, Type> _nameToState = new Dictionary<GameActionState, Type>
         {
-            { GameActionState.UseTicket, typeof(UseTicket) },
-            { GameActionState.MoveVisitorStart, typeof(MoveVisitorStart) },
+            { GameActionState.ChooseTicketToSpend, typeof(ChooseTicketToSpend) },
+            { GameActionState.ChooseVisitorToMove, typeof(ChooseVisitorToMove) },
             { GameActionState.MoveVisitorEnd, typeof(MoveVisitorEnd) },
             { GameActionState.UseContractBonus, typeof(UseContractBonus) },
+            { GameActionState.PassExecutive, typeof(PassExecutive) },
             { GameActionState.Pass, typeof(Pass) }
         };
 
-        public ExecutiveActionContext(Game game) : base(game, _nameToState) { }
-        public ExecutiveActionContext(Game game, GameAction action) : base(game, action, _nameToState) { }
+        public ExecutiveContext(Game game) : base(game, _nameToState) { }
+        public ExecutiveContext(Game game, GameAction action) : base(game, action, _nameToState) { }
     }
 
-    public class UseTicket : ActionState
+    public class PassExecutive : ActionState
     {
-        public UseTicket()
+        public PassExecutive()
         {
-            Name = GameActionState.UseTicket;
-            TransitionTo = new HashSet<GameActionState> { GameActionState.MoveVisitorStart };
+            Name = GameActionState.PassExecutive;
+            RequiredParams = new HashSet<string> { };
+            TransitionTo = new HashSet<GameActionState> { GameActionState.ChooseVisitorToMove };
         }
 
-        public override void DoAction<InternationalMarketContext>(InternationalMarketContext context)
+    }
+
+    public class ChooseTicketToSpend : ActionState
+    {
+        public ChooseTicketToSpend()
+        {
+            Name = GameActionState.ChooseTicketToSpend;
+            RequiredParams = new HashSet<string> { "Location" };
+            TransitionTo = new HashSet<GameActionState> {  };
+        }
+
+        public override void DoAction<ExecutiveContext>(ExecutiveContext context)
         {
             var game = context.Game;
-            var newAction = new GameAction { State = GameActionState.MoveVisitorStart, IsExecutable = false, Parent = context.Action };
-            game.CurrentTurn.AddPendingAction(newAction);
+            var ticket = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
+            var visitorAction = new GameAction { State = GameActionState.ChooseVisitorToMove, IsExecutable = false, Parent = context.Action };
+            visitorAction.StateParams["Visitor"] = context.Action.StateParams["Location"];
+            game.CurrentTurn.AddPendingAction(visitorAction);
         }
-
+        
         public override bool IsValidGameState(ActionContext context)
         {
             var game = context.Game;
@@ -49,11 +64,12 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             return true;
         }
     }
-    public class MoveVisitorStart : ActionState
+    public class ChooseVisitorToMove : ActionState
     {
-        public MoveVisitorStart()
+        public ChooseVisitorToMove()
         {
-            Name = GameActionState.MoveVisitorStart;
+            Name = GameActionState.ChooseVisitorToMove;
+            RequiredParams = new HashSet<string> { "Location" };
             TransitionTo = new HashSet<GameActionState> { GameActionState.MoveVisitorEnd };
         }
 
@@ -84,10 +100,11 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public MoveVisitorEnd()
         {
             Name = GameActionState.MoveVisitorEnd;
-            TransitionTo = new HashSet<GameActionState> { GameActionState.UseTicket, GameActionState.Pass };
+            RequiredParams = new HashSet<string> { "Visitor", "Location" };
+            TransitionTo = new HashSet<GameActionState> { GameActionState.ChooseTicketToSpend, GameActionState.Pass };
         }
 
-        public override void DoAction<InternationalMarketContext>(InternationalMarketContext context)
+        public override void DoAction<ExecutiveContext>(ExecutiveContext context)
         {
             var game = context.Game;
 
@@ -157,7 +174,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             TransitionTo = new HashSet<GameActionState> { GameActionState.Pass };
         }
 
-        public override void DoAction<InternationalMarketContext>(InternationalMarketContext context)
+        public override void DoAction<ExecutiveContext>(ExecutiveContext context)
         {
             var game = context.Game;
             base.DoAction(context);

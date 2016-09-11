@@ -156,9 +156,10 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if ( context.Action.StateParams.ContainsKey("Contract") )
             {
                 ArtManager.SellArt(context.Game.CurrentPlayer, context.Action.StateParams["Location"]);
-                ContractManager.DiscardContract(context.Game.CurrentPlayer, context.Action.StateParams["Contract"]);
 
                 var visitorAction = new GameAction { State = GameActionState.SellChooseVisitor, Parent = context.Action, IsExecutable = true };
+                visitorAction.StateParams["Contract"] = context.Action.StateParams["Contract"];
+
                 bool HasVisitor = context.Game.Visitors.Any(v => v.Location == GameVisitorLocation.Gallery && v.PlayerGallery == context.Game.CurrentPlayer.Color);
                 if (HasVisitor == true)
                     visitorAction.IsExecutable = false;
@@ -222,9 +223,10 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if (context.Action.StateParams.ContainsKey("Art"))
             {
                 ArtManager.SellArt(context.Game.CurrentPlayer, context.Action.StateParams["Art"]);
-                ContractManager.DiscardContract(context.Game.CurrentPlayer, context.Action.StateParams["Location"]);
 
                 var visitorAction = new GameAction { State = GameActionState.SellChooseVisitor, Parent = context.Action, IsExecutable = true };
+                visitorAction.StateParams["Contract"] = context.Action.StateParams["Location"];
+
                 bool HasVisitor = context.Game.Visitors.Any(v => v.Location == GameVisitorLocation.Gallery && v.PlayerGallery == context.Game.CurrentPlayer.Color);
                 if (HasVisitor == true)
                     visitorAction.IsExecutable = false;
@@ -252,12 +254,8 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if (!base.IsValidGameState(context))
                 return false;
 
-            GameContractLocation location;
-            if (!Enum.TryParse(context.Action.StateParams["Location"], out location))
-                return false;
-
-            var contract = context.Game.CurrentPlayer.Contracts.FirstOrDefault(c => c.Location == location && c.IsComplete == false);
-            if (contract == null)
+            var contract = ContractManager.GetPlayerContractByLocationString(context.Game.CurrentPlayer, context.Action.StateParams["Location"]);
+            if (contract == null || contract.IsComplete == true)
                 return false;
 
             if (context.Action.StateParams.ContainsKey("Art"))
@@ -278,21 +276,29 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
         public SellChooseVisitor()
         {
             Name = GameActionState.SellChooseVisitor;
-            RequiredParams = new HashSet<string> { };
+            RequiredParams = new HashSet<string> { "Contract" };
             TransitionTo = new HashSet<GameActionState> { GameActionState.SellChooseVisitor };
         }
 
         public override void DoAction<SalesOfficeContext>(SalesOfficeContext context)
         {
+            var contractAction = new GameAction { Parent = context.Action, State = GameActionState.SellChooseContractOrientation, IsExecutable = false };
+            contractAction.StateParams["Contract"] = context.Action.StateParams["Contract"];
             var visitors = context.Game.Visitors.Where(v => v.Location == GameVisitorLocation.Gallery && v.PlayerGallery == context.Game.CurrentPlayer.Color);
-            if (visitors.Count() == 0)
-                return;
-            var location = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
-            VisitorManager.MoveVisitor(context.Game.CurrentPlayer, location, GameVisitorLocation.Gallery, GameVisitorLocation.Plaza);
+            if (visitors.Count() != 0)
+            {
+                var location = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
+                VisitorManager.MoveVisitor(context.Game.CurrentPlayer, location, GameVisitorLocation.Gallery, GameVisitorLocation.Plaza);
 
+                if (location == VisitorTicketType.vip || location == VisitorTicketType.investor)
+                {
+                    contractAction.StateParams["Location"] = context.Action.StateParams["Location"];
+                    contractAction.IsExecutable = true;
+                }
+            }
+            context.Action.Turn.AddPendingAction(contractAction);
             //todo replace below with a pass button or something.
             context.Game.CurrentTurn.AddCompletedAction(context.Action);
-            AddPassAction(context);
         }
 
         public override bool IsValidGameState(ActionContext context)
@@ -304,15 +310,53 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             if (HasGalleryVisitors == false)
                 return true;
 
-            if (context.Action.StateParams.ContainsKey("Location") == false)
-                return false;
-
             VisitorTicketType location;
             if (!Enum.TryParse(context.Action.StateParams["Location"], out location))
                 return false;
 
             bool HasTypeInGallery = context.Game.Visitors.Any(v => v.Location == GameVisitorLocation.Gallery && v.PlayerGallery == context.Game.CurrentPlayer.Color && v.Type == location);
             if (HasTypeInGallery == false)
+                return false;
+
+            return true;
+        }
+    }
+
+    public class SellChooseContractOrientation : ActionState
+    {
+        public SellChooseContractOrientation()
+        {
+            Name = GameActionState.SellChooseContractOrientation;
+            RequiredParams = new HashSet<string> { "Contract", "Location" };
+            TransitionTo = new HashSet<GameActionState> { GameActionState.Pass };
+        }
+
+        public override void DoAction<SalesOfficeContext>(SalesOfficeContext context)
+        {
+            var orientation = (VisitorTicketType)Enum.Parse(typeof(VisitorTicketType), context.Action.StateParams["Location"]);
+            if (orientation == VisitorTicketType.investor)
+                ContractManager.FlipContract(context.Game.CurrentPlayer, context.Action.StateParams["Contract"], GameContractOrientation.investor);
+            else if (orientation == VisitorTicketType.vip)
+                ContractManager.FlipContract(context.Game.CurrentPlayer, context.Action.StateParams["Contract"], GameContractOrientation.vip);
+
+            //todo replace below with a pass button or something.
+            context.Game.CurrentTurn.AddCompletedAction(context.Action);
+            AddPassAction(context);
+        }
+
+        public override bool IsValidGameState(ActionContext context)
+        {
+            if (!base.IsValidGameState(context))
+                return false;
+
+            VisitorTicketType orientation;
+            if (!Enum.TryParse(context.Action.StateParams["Location"], out orientation))
+                return false;
+
+            if (orientation == VisitorTicketType.collector)
+                return false;
+
+            if (ContractManager.GetPlayerContractByLocationString(context.Game.CurrentPlayer, context.Action.StateParams["Contract"]) == null)
                 return false;
 
             return true;

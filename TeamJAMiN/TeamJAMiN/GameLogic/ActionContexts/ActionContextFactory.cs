@@ -50,7 +50,10 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
             { GameActionState.ChooseVisitorFromPlaza, typeof(BonusContext) },
             { GameActionState.ChooseVisitorFromPlazaVipInvestor, typeof(BonusContext) },
             { GameActionState.ChooseVisitorFromBag, typeof(BonusContext) },
-            { GameActionState.ChooseArtistFame, typeof(BonusContext) }
+            { GameActionState.ChooseArtistFame, typeof(BonusContext) },
+            { GameActionState.UseContractBonus, typeof(ExecutiveContext) },
+            { GameActionState.ChooseTicketToSpend, typeof(ExecutiveContext) },
+
         };
 
         public static ActionContext GetContext(GameActionState state, Game game)

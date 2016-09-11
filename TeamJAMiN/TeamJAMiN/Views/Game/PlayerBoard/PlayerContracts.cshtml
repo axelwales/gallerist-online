@@ -1,62 +1,18 @@
 ﻿@using TeamJAMiN.Models.ComponentViewModels
+@using TeamJAMiN.Models.GameViewHelpers
 @model PlayerContractsViewModel
 
 <div class="row">
 @foreach (PlayerContractViewModel contractModel in Model.Contracts)
 {
     <div class="col-xs-4">
-        @if (Model.IsPlayerBoardOfActivePlayer && Model.IsActivePlayer && Model.IsValidActionState)
+        @if (contractModel.HasActionForm)
         {
-            using (Html.BeginForm("TakeGameAction", "Game", new { id = Model.Player.GameId, gameAction = Model.State, actionLocation = contractModel.Location }, FormMethod.Post, new { role = "form" }))
-            {
-                @Html.AntiForgeryToken()
-                <div id="player-contract-@contractModel.Location.ToString().ToLower()" data-location="@contractModel.Location" class="contract-card tile player-contract @contractModel.EmptyCssClass highlight">
-                    <input type="submit" class="action-button" value="" />
-                    @if (contractModel.Contract != null)
-                    {
-                        <div class="row no-gutter contract-art-row">
-                            @* Art Type *@
-                            <div class="col-xs-12 no-padding">
-                                <div class="art-icon @contractModel.Contract.Art.ToString()-icon"></div>
-                            </div>
-                        </div>
-                        <div class="row no-gutter contract-bonus-row">
-                            @* Contract Action *@
-                            <div class="col-xs-12 no-padding">
-                                <div class="contract-bonus @contractModel.BonusClass"></div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="ticket-@contractModel.Ticket icon-lg icon-background margin-center"></div>
-                    }
-                </div>
-            }
+            Html.GetActionForm("~/Views/Game/PlayerBoard/PlayerContract.cshtml", Model.Player.Game, contractModel.State, contractModel.Location.ToString(), contractModel);
         }
         else
         {
-            <div id="player-contract-@contractModel.Location.ToString().ToLower()" data-location="@contractModel.Location" class="contract-card tile player-contract @contractModel.EmptyCssClass">
-                @if (contractModel.Contract != null)
-                    {
-                    <div class="row no-gutter contract-art-row">
-                        @* Art Type *@
-                        <div class="col-xs-12 no-padding">
-                            <div class="art-icon @contractModel.Contract.Art.ToString()-icon"></div>
-                        </div>
-                    </div>
-                        <div class="row no-gutter contract-bonus-row">
-                            @* Contract Action *@
-                            <div class="col-xs-12 no-padding">
-                                <div class="contract-bonus @contractModel.BonusClass"></div>
-                            </div>
-                        </div>
-                }
-                else
-                {
-                    <div class="ticket-@contractModel.Ticket icon-lg icon-background margin-center"></div>
-                }
-            </div>
+            Html.Partial("~/Views/Game/PlayerBoard/PlayerContract.cshtml", contractModel);
         }
     </div>
 }

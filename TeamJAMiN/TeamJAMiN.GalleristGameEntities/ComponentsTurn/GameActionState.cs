@@ -18,15 +18,16 @@ namespace TeamJAMiN.GalleristComponentEntities
         ChooseArtistFame, ChooseContract,
         GetTicketInvestor, GetMoney, GetTicketVip, GetInfluence, GetAssistant,
         GetTicketCollector,
-        UseTicket,
+        ChooseTicketToSpend,
         UseContractBonus,
-        MoveVisitorStart,
+        ChooseVisitorToMove,
         MoveVisitorEnd,
         UseInfluenceAsMoney,
         UseInfluenceAsFame,
         GetFame,
         NoAction,
         MoveVisitorFromLobby,
-        SellChooseContract
+        SellChooseContract,
+        SellChooseContractOrientation
     }
 }

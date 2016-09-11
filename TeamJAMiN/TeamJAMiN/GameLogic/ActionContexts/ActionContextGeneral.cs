@@ -41,7 +41,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                 GameActionState.InternationalMarket,
                 GameActionState.MediaCenter,
                 GameActionState.ArtistColony,
-                GameActionState.UseTicket,
+                GameActionState.ChooseTicketToSpend,
                 GameActionState.UseContractBonus
             };
         }
@@ -74,7 +74,7 @@ namespace TeamJAMiN.Controllers.GameLogicHelpers
                     var executiveActions = new List<GameAction>
                     {
                         new GameAction { State = GameActionState.UseContractBonus, Parent = context.Action.Parent, Status = GameActionStatus.Optional, IsExecutable = false },
-                        new GameAction { State = GameActionState.UseTicket, Parent = context.Action.Parent, Status = GameActionStatus.Optional, IsExecutable = false },
+                        new GameAction { State = GameActionState.ChooseTicketToSpend, Parent = context.Action.Parent, Status = GameActionStatus.Optional, IsExecutable = false },
                     };
                     TurnManager.AddPendingActions(game.CurrentTurn, executiveActions, PendingPosition.first);
                 }
